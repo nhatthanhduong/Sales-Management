@@ -1,0 +1,143 @@
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: #e9f5db;
+}
+
+.navbar {
+    overflow: hidden;
+    background-color: #718355;
+    font-family: Arial, Helvetica, sans-serif;
+    display: flex; /* Enable flexbox */
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
+}
+
+/* Links inside the navbar */
+.navbar a {
+    font-size: 16px;
+    color: white;
+    padding: 14px 16px;
+    text-decoration: none;
+}
+
+/* The dropdown container */
+.dropdown {
+    overflow: hidden;
+}
+
+/* Dropdown button */
+.dropdown .dropbtn {
+    display: block;
+    font-size: 16px;
+    border: none;
+    color: white;
+    padding: 14px 16px;
+}
+
+/* Add a red background color to navbar links on hover */
+.navbar a:hover, .dropdown:hover .dropbtn {
+    background-color: #87986a;
+}
+
+/* Dropdown content (hidden by default) */
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #cfe1b9;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+
+/* Links inside the dropdown */
+.dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    text-align: left;
+}
+
+/* Add a grey background color to dropdown links on hover */
+.dropdown-content a:hover {
+    background-color: #b5c99a;
+}
+
+/* Show the dropdown menu on hover */
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+.button-wrapper {
+    width: 100%;
+}
+
+.home {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 20px;
+}
+
+.home-icon {
+    background-color: #87986A;
+    text-decoration: none;
+    border-radius: 15px;
+}
+
+.large-home-icon {
+    background-color: #87986A;
+    text-decoration: none;
+    border-radius: 15px;
+}
+
+.icon-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #b5c99a;
+    color: black;
+    font-size: 30px;
+    font-weight: bold;
+    border-radius: 15px;
+    margin: 15px;
+}
+
+.icon-wrapper img {
+    width: 300px;  /* Adjust size as needed */
+    height: 300px; /* Adjust size as needed */
+    margin: 15px;
+}
+
+h1 {
+    text-align: center;
+}
+th, td {
+    text-align: center;
+}
+
+#action {
+    color: #155E95;
+}
+#action:hover {
+    color: #C84C05;
+}
+
+table {
+    border-collapse: collapse;
+    border: 3px solid #87986A;
+    width: 100%; /* Adjust to fit within the container */
+}
+
+th, td {
+    border: 2px solid #87986A;
+}
+input {
+    padding: 3px; /* Adjust padding for a snug fit */
+    box-sizing: border-box; /* Include padding and border in the element's width */
+    font-size: inherit; /* Match the font size of the table */
+    text-align: center; /* Align input text to match table style */
+    width: 100%;
+}
+
+
+

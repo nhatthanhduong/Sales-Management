@@ -1,0 +1,97 @@
+<!-- Use Flask syntax to inherits the format of base.html -->
+{% extends 'base.html' %}
+
+<!-- Head block inheriting from base.html's head -->
+{% block head %}
+
+{% endblock %}
+
+<!-- Body block inheriting from base.html's body -->
+{% block body %}
+<header>
+    <div class="navbar">
+        <a href="/">Home</a>
+        <div class="dropdown">
+            <a href="/sales_record" class="dropbtn">Sales Record
+                <i class="fa fa-caret-down"></i>
+            </a>
+            <div class="dropdown-content">
+                <a href="/customer">Customer</a>
+                <a href="/supplier">Supplier</a>
+                <a href="/product">Product</a>
+                <a href="/purchase_order">Purchase Order</a>
+                <a href="/sales_order">Sales Order</a>
+            </div>
+        </div>
+        <div class="dropdown">
+            <a href="/management" class="dropbtn">Management
+                <i class="fa fa-caret-down"></i>
+            </a>
+            <div class="dropdown-content">
+                <a href="/management/customer_debt">Customer Debt</a>
+                <a href="/management/stock">Stock</a>
+            </div>
+        </div>
+    </div>
+</header>
+<div>
+    <h1>Purchase Order - Product Management</h1>
+    <div>
+        <div>
+            <table>
+                <tr>
+                    <th>Product ID</th>
+                    <th>Product Name</th>
+                    <th>Quantity</th>
+                    <th>Price</th>
+                    <th>Actions</th>
+                </tr>
+                <!-- Use for loop to display all customer in the database row by row -->
+                {% for row in results %}
+                    <tr>
+                        <td>{{ row.productID }}</td>
+                        <td>{{ row.productName }}</td>
+                        <td>{{ row.quantity }}</td>
+                        <td>{{ row.price }}</td>
+                        <td>
+                            <!-- Pass customer's id to the URL, which the python function uses to determine the customer to delete -->
+                            <a id="action", href="/purchase_order/add_products/delete/{{ row.purchaseOrderID }}/{{ row.productID }}">Delete</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+                
+                <!-- Get user's input for new customer and send it to the main route for python program -->
+                <form action="/purchase_order/add_products/{{ purchase_order.purchaseOrderID }}" method="POST">
+                    <tr>
+                        <td></td>
+                        <td><input type="text" name="productName" list = "products" autocomplete="off"></td>
+                        <td><input type="number" name="quantity" autocomplete="off"></td>
+                        <td><input type="number" name ="price"></td>
+                        <td><input type="submit" value="Add Product"></td>
+                    </tr>
+                </form>
+            </table>
+            <datalist id="products">
+                {% for product in products %}
+                    <option value="{{ product.productName }}"></option>
+                {% endfor %}
+            </datalist>
+        </div>
+        <div>
+            <h2>Product List</h2>
+            <table>
+                <tr>
+                    <th>Product ID</th>
+                    <th>Product Name</th>
+                </tr>
+                {% for product in products %}
+                    <tr>
+                        <td>{{ product.productID }}</td>
+                        <td>{{ product.productName }}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock%} 

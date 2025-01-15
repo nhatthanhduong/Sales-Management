@@ -1,0 +1,63 @@
+<!-- Use Flask syntax to inherits the format of base.html -->
+{% extends 'base.html' %}
+
+<!-- Head block inheriting from base.html's head -->
+{% block head %}
+
+{% endblock %}
+
+<!-- Body block inheriting from base.html's body -->
+{% block body %}
+<header>
+    <div class="navbar">
+        <a href="/">Home</a>
+        <div class="dropdown">
+            <a href="/sales_record" class="dropbtn">Sales Record
+                <i class="fa fa-caret-down"></i>
+            </a>
+            <div class="dropdown-content">
+                <a href="/customer">Customer</a>
+                <a href="/supplier">Supplier</a>
+                <a href="/product">Product</a>
+                <a href="/purchase_order">Purchase Order</a>
+                <a href="/sales_order">Sales Order</a>
+            </div>
+        </div>
+        <div class="dropdown">
+            <a href="/management" class="dropbtn">Management
+                <i class="fa fa-caret-down"></i>
+            </a>
+            <div class="dropdown-content">
+                <a href="/management/customer_debt">Customer Debt</a>
+                <a href="/management/stock">Stock</a>
+            </div>
+        </div>
+    </div>
+</header>
+<div class="content">
+    <h1>Sales Order Management</h1>
+    <table>
+        <tr>
+            <th>Order Date</th>
+            <th>Payment Date</th>
+            <th>Payment Method</th>
+            <th>Delivery Fee</th>
+            <th>Discount</th>
+            <th>Delivery Person</th>
+            <th>Customer ID</th>
+        </tr>
+        <form action="/sales_order/update/{{ sales_order.salesOrderID }}" method="POST">
+        <tr>
+            <td><input type="date" name="orderDate" value="{{ sales_order.orderDate }}"></td>
+            <td><input type="date" name="paymentDate" value="{{ sales_order.paymentDate }}"></td>
+            <td><input type="text" name ="paymentMethod" value="{{ sales_order.paymentMethod }}" autocomplete="off"></td>
+            <td><input type="number" name ="deliveryFee" value="{{ sales_order.deliveryFee }}" autocomplete="off"></td>
+            <td><input type="number" name ="discount" value="{{ sales_order.discount }}" autocomplete="off"></td>
+            <td><input type="text" name ="deliveryPerson" value="{{ sales_order.deliveryPerson }}" autocomplete="off"></td>
+            <td><input type="text" name ="customerID" value="{{ sales_order.customerID }}" autocomplete="off"></td>
+            <td><input type="submit" value="Update"></td>
+        </tr>
+        </form>
+    </table>
+</div>
+{% endblock%} 

@@ -1,0 +1,80 @@
+<!-- Use Flask syntax to inherits the format of base.html -->
+{% extends 'base.html' %}
+
+<!-- Head block inheriting from base.html's head -->
+{% block head %}
+
+{% endblock %}
+
+<!-- Body block inheriting from base.html's body -->
+{% block body %}
+<header>
+    <div class="navbar">
+        <a href="/">Home</a>
+        <div class="dropdown">
+            <a href="/sales_record" class="dropbtn">Sales Record
+                <i class="fa fa-caret-down"></i>
+            </a>
+            <div class="dropdown-content">
+                <a href="/customer">Customer</a>
+                <a href="/supplier">Supplier</a>
+                <a href="/product">Product</a>
+                <a href="/purchase_order">Purchase Order</a>
+                <a href="/sales_order">Sales Order</a>
+            </div>
+        </div>
+        <div class="dropdown">
+            <a href="/management" class="dropbtn">Management
+                <i class="fa fa-caret-down"></i>
+            </a>
+            <div class="dropdown-content">
+                <a href="/management/customer_debt">Customer Debt</a>
+                <a href="/management/stock">Stock</a>
+            </div>
+        </div>
+    </div>
+</header>
+<main>
+    <div class="home">
+        <a href="/customer" class="home-icon">
+            <div class="icon-wrapper">
+                <img src="https://cdn-icons-png.flaticon.com/512/3126/3126647.png" alt="">
+                Customer
+            </div>
+        </a>
+
+        <a href="/supplier" class="home-icon">
+            <div class="icon-wrapper">
+                <img src="https://cdn-icons-png.flaticon.com/512/3773/3773184.png" alt="">
+                Supplier
+            </div>   
+        </a>
+    </div>
+
+    <div class="home">
+        <a href="/product" class="home-icon">
+            <div class="icon-wrapper">
+                <img src="https://cdn-icons-png.flaticon.com/512/4129/4129437.png" alt="">
+                Product
+            </div>   
+        </a>
+
+        <a href="/purchase_order" class="home-icon">
+            <div class="icon-wrapper">
+                <img src="https://cdn-icons-png.flaticon.com/512/84/84426.png" alt="">
+                Purchase Order
+            </div>   
+        </a>
+
+        <a href="/sales_order" class="home-icon">
+            <div class="icon-wrapper">
+                <img src="https://cdn-icons-png.flaticon.com/512/1077/1077976.png" alt="">
+                Sales Order
+            </div>   
+        </a>
+    </div>
+
+        
+    
+</main>
+{% endblock%} 
