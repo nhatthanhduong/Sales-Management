@@ -1,18 +1,18 @@
-import sqlalchemy
-from sqlalchemy import create_engine, text
+# from sqlalchemy import create_engine
+from sqlalchemy import text
 from flask import Flask, request, render_template, redirect
 from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
 
 # Create connection and engine with mysql database
-con_sqlalchemy = 'mysql+pymysql://thanhphaolo:duongnhatthanh@database-3.c18iwmgyqpdp.ap-southeast-2.rds.amazonaws.com:3306/product_sales'
-engine = create_engine(con_sqlalchemy)
+# con_sqlalchemy = 'mysql+pymysql://thanhphaolo:duongnhatthanh@database-3.c18iwmgyqpdp.ap-southeast-2.rds.amazonaws.com:3306/product_sales'
+# engine = create_engine(con_sqlalchemy)
 
 # Create Flask instance
 app = Flask(__name__)
 
 # Connect with sqlite database
-app.config['SQLALCHEMY_DATABASE_URI'] = con_sqlalchemy
+app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///product_sales.db"
 db = SQLAlchemy(app)
 
 purchase_order_details = db.Table('purchaseorderdetails',
