@@ -8,32 +8,6 @@
 
 <!-- Body block inheriting from base.html's body -->
 {% block body %}
-<header>
-    <div class="navbar">
-        <a href="/">Home</a>
-        <div class="dropdown">
-            <a href="/sales_record" class="dropbtn">Sales Record
-                <i class="fa fa-caret-down"></i>
-            </a>
-            <div class="dropdown-content">
-                <a href="/customer">Customer</a>
-                <a href="/supplier">Supplier</a>
-                <a href="/product">Product</a>
-                <a href="/purchase_order">Purchase Order</a>
-                <a href="/sales_order">Sales Order</a>
-            </div>
-        </div>
-        <div class="dropdown">
-            <a href="/management" class="dropbtn">Management
-                <i class="fa fa-caret-down"></i>
-            </a>
-            <div class="dropdown-content">
-                <a href="/management/customer_debt">Customer Debt</a>
-                <a href="/management/stock">Stock</a>
-            </div>
-        </div>
-    </div>
-</header>
 <div>
     <h1>Sales Order Management</h1>
     <div>
