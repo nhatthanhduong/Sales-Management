@@ -10,15 +10,15 @@
 {% block body %}
 <main>
     <div class="home">
-        <a href="/sales_record" class="home-icon">
-            <div class="icon-wrapper">
+        <a href="/sales_record" class="home__card">
+            <div class="home__card--container">
                 <img src="{{ url_for('static', filename='sales_record.png') }}" alt="">
                 Sales Record
             </div>
         </a>
 
-        <a href="/management" class="home-icon">
-            <div class="icon-wrapper">
+        <a href="/management" class="home__card">
+            <div class="home__card--container">
                 <img src="{{ url_for('static', filename='management.png') }}" alt="">
                 Management
             </div>   

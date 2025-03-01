@@ -10,42 +10,40 @@
 {% block body %}
 <main>
     <div class="home">
-        <a href="/customer" class="home-icon">
-            <div class="icon-wrapper">
+        <a href="/customer" class="home__card">
+            <div class="home__card--container">
                 <img src="{{ url_for('static', filename='customer.png') }}" alt="">
                 Customer
             </div>
         </a>
 
-        <a href="/supplier" class="home-icon">
-            <div class="icon-wrapper">
+        <a href="/supplier" class="home__card">
+            <div class="home__card--container">
                 <img src="{{ url_for('static', filename='supplier.png') }}" alt="">
                 Supplier
             </div>   
         </a>
-    </div>
 
-    <div class="home">
-        <a href="/product" class="home-icon">
-            <div class="icon-wrapper">
+        <a href="/product" class="home__card">
+            <div class="home__card--container">
                 <img src="{{ url_for('static', filename='product.png') }}" alt="">
                 Product
             </div>   
         </a>
 
-        <a href="/purchase_order" class="home-icon">
-            <div class="icon-wrapper">
+        <a href="/purchase_order" class="home__card">
+            <div class="home__card--container">
                 <img src="{{ url_for('static', filename='purchase_order.png') }}" alt="">
                 Purchase Order
             </div>   
         </a>
 
-        <a href="/sales_order" class="home-icon">
-            <div class="icon-wrapper">
+        <a href="/sales_order" class="home__card">
+            <div class="home__card--container">
                 <img src="{{ url_for('static', filename='sales_order.png') }}" alt="">
                 Sales Order
             </div>   
-        </a>
+        </a>        
     </div>
 
         

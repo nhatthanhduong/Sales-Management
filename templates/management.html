@@ -10,15 +10,15 @@
 {% block body %}
 <main>
     <div class="home">
-        <a href="/management/customer_debt" class="home-icon">
-            <div class="icon-wrapper">
+        <a href="/management/customer_debt" class="home__card">
+            <div class="home__card--container">
                 <img src="{{ url_for('static', filename='customer_debt.png') }}" alt="">
                 Customer Debt
             </div>
         </a>
 
-        <a href="/management/stock" class="home-icon">
-            <div class="icon-wrapper">
+        <a href="/management/stock" class="home__card">
+            <div class="home__card--container">
                 <img src="{{ url_for('static', filename='stock.png') }}" alt="">
                 Stock
             </div>   
