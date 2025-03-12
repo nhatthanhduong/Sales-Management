@@ -3,7 +3,7 @@
 
 <!-- Head block inheriting from base.html's head -->
 {% block head %}
-
+<link rel="stylesheet" href="{{ url_for('static', filename = 'css/home.css') }}">
 {% endblock %}
 
 <!-- Body block inheriting from base.html's body -->

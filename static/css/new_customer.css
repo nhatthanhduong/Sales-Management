@@ -1,0 +1,61 @@
+/* New Customer CSS */
+.new__customer--content {
+    display: none;
+}
+
+.new__customer--popup {
+    position: fixed;
+    background-color: #87986A;
+    width: 50vh;
+    height: 20vh;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 10px;
+    padding: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.new__customer--confirmation {
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Centers content vertically */
+    align-items: center; /* Centers content horizontally */
+    padding: 0 10px;
+    border-radius: 10px;
+    background-color: #b5c99a;
+    width: 100%;
+    height: 100%; /* Change from 100% to auto */
+}
+
+.new__customer--answer {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    width: 100%;
+}
+
+.new__customer--yes {
+    cursor: pointer;
+    background-color: #b5c99a;
+    font-weight: 550;
+    font-size: 15px;
+    border: 2px solid #131313;
+    padding: 5px 15px;
+}
+
+.new__customer--no {
+    display: inline-block;
+    text-decoration: none;
+    color: #131313;
+    font-weight: 550;
+    font-size: 15px;
+    border: 2px solid #131313;
+    padding: 5px 15px;
+}
+
+.new__customer--yes:hover, .new__customer--no:hover {
+    background-color: #87986A;
+}

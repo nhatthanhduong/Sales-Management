@@ -1,0 +1,34 @@
+/* Home CSS */
+.home {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Dynamic columns */
+    justify-items: center;
+    align-items: center;
+    row-gap: 20px;
+    column-gap: 40px;
+    padding: 20px;
+}
+
+.home__card {
+    background-color: #87986A;
+    text-decoration: none;
+    border-radius: 15px;
+}
+
+.home__card--container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #b5c99a;
+    color: black;
+    font-size: 30px;
+    font-weight: bold;
+    border-radius: 15px;
+    margin: 15px;
+}
+
+.home__card--container img {
+    width: 300px;  /* Adjust size as needed */
+    height: 300px; /* Adjust size as needed */
+    margin: 15px;
+}

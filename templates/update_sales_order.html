@@ -12,7 +12,9 @@
     <h1>Sales Order Management</h1>
     <table>
         <tr>
-            <th>Order Date</th>
+            <th>Received Date</th>
+            <th>Ordering Date</th>
+            <th>Completed Date</th>
             <th>Payment Date</th>
             <th>Payment Method</th>
             <th>Delivery Fee</th>
@@ -22,7 +24,9 @@
         </tr>
         <form action="/sales_order/update/{{ sales_order.salesOrderID }}" method="POST">
         <tr>
-            <td><input type="date" name="orderDate" value="{{ sales_order.orderDate }}"></td>
+            <td><input type="date" name="receivedDate" value="{{ sales_order.receivedDate }}"></td>
+            <td><input type="date" name="orderingDate" value="{{ sales_order.orderingDate }}"></td>
+            <td><input type="date" name="completedDate" value="{{ sales_order.completedDate }}"></td>
             <td><input type="date" name="paymentDate" value="{{ sales_order.paymentDate }}"></td>
             <td><input type="text" name ="paymentMethod" value="{{ sales_order.paymentMethod }}" autocomplete="off"></td>
             <td><input type="number" name ="deliveryFee" value="{{ sales_order.deliveryFee }}" autocomplete="off"></td>

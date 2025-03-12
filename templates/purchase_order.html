@@ -14,7 +14,7 @@
         <div>
             <table>
                 <tr>
-                    <th>Order Date</th>
+                    <th>Ordering Date</th>
                     <th>Payment Date</th>
                     <th>Supplier ID</th>
                     <th>Supplier Name</th>
@@ -23,7 +23,7 @@
                 <!-- Use for loop to display all supplier in the database row by row -->
                 {% for purchase_order in purchase_orders %}
                     <tr>
-                        <td>{{ purchase_order.orderDate }}</td>
+                        <td>{{ purchase_order.orderingDate }}</td>
                         <td>{{ purchase_order.paymentDate }}</td>
                         <td>{{ purchase_order.supplierID }}</td>
                         <td>{{ purchase_order.supplierName }}</td>
@@ -42,7 +42,7 @@
                 <!-- Get user's input for new supplier and send it to the main route for python program -->
                 <form action="/purchase_order" method="POST">
                     <tr>
-                        <td><input type="date" name="orderDate" value="{{ today }}"></td>
+                        <td><input type="date" name="orderingDate" value="{{ today }}"></td>
                         <td><input type="date" name ="paymentDate"></td>
                         <td><input type="text" name="supplierID" autocomplete="off"></td>
                         <td><input type="text" name="supplierName" autocomplete="off" list="suppliers"></td>

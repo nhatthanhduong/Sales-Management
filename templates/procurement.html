@@ -1,0 +1,81 @@
+<!-- Use Flask syntax to inherits the format of base.html -->
+{% extends 'base.html' %}
+
+<!-- Head block inheriting from base.html's head -->
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename = 'css/sales.css') }}">
+{% endblock %}
+
+<!-- Body block inheriting from base.html's body -->
+{% block body %}
+<div class="sales">
+    <div class="sales__container">
+        <h2>Suppliers - Products</h2>
+        <div class="sales__content">
+            <div class="sales__card">
+                <span class="sales__card--plus">+</span>
+                <div class="sales__card--content">
+                    <form action="/procurement/new_supplier" method="POST">
+                        <label for="name">Name:</label>
+                        <input type="text" id="name" name="supplierName" autocomplete="off">
+    
+                        <label for="phone">Phone:</label>
+                        <input type="text" id="phone" name="supplierPhone">
+    
+                        <label for="address">Address:</label>
+                        <input type="text" id="address" name="supplierAddress">
+
+                        <input type="submit" value="Add Supplier">
+                    </form>
+                </div>
+            </div>
+            {% for supplierID, details in supplierDetails %}
+                <div class="sales__card">
+                    <h4>Name: {{ details.supplierName }}</h2>
+                    <div class="sales__card--content">
+                        <form action="/procurement/add_product" method="POST">
+                            <input type="text" name="supplierID" value="{{ supplierID }}" hidden>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Product</th>
+                                        <th>Category</th>
+                                        <th>Description</th>
+                                        <th>Unit</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="procurement__row">
+                                    {% for product in details.products %}
+                                        <tr>
+                                            <td>{{ product.productName }}</td>
+                                            <td>{{ product.productCategory }}</td>
+                                            <td>{{ product.productDescription }}</td>
+                                            <td>{{ product.unit }}</td>
+                                            <td></td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <td colspan="5">
+                                            <button type="button" class="procurement__row--add">+</button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="5">
+                                            <input type="submit" value="Add Products">
+                                        </td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </form>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<script src="{{ url_for('static', filename = 'js/procurement.js') }}"></script>
+{% endblock%} 

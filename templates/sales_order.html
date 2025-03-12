@@ -14,12 +14,10 @@
         <div>
             <table id="large_table">
                 <tr>
-                    <th>Order Date</th>
+                    <th>Received Date</th>
+                    <th>Ordering Date</th>
+                    <th>Completed Date</th>
                     <th>Payment Date</th>
-                    <th>Payment Method</th>
-                    <th>Delivery Fee</th>
-                    <th>Discount</th>
-                    <th>Delivery Person</th>
                     <th>CustomerID</th>
                     <th>Customer Name</th>
                     <th>Actions</th>
@@ -27,12 +25,10 @@
                 <!-- Use for loop to display all supplier in the database row by row -->
                 {% for sales_order in sales_orders %}
                     <tr>
-                        <td>{{ sales_order.orderDate }}</td>
+                        <td>{{ sales_order.receivedDate }}</td>
+                        <td>{{ sales_order.orderingDate }}</td>
+                        <td>{{ sales_order.completedDate }}</td>
                         <td>{{ sales_order.paymentDate }}</td>
-                        <td>{{ sales_order.paymentMethod }}</td>
-                        <td>{{ sales_order.deliveryFee }}</td>
-                        <td>{{ sales_order.discount }}</td>
-                        <td>{{ sales_order.deliveryPerson }}</td>
                         <td>{{ sales_order.customerID }}</td>
                         <td>{{ sales_order.customerName }}</td>
                         <td>
@@ -50,12 +46,10 @@
                 <!-- Get user's input for new supplier and send it to the main route for python program -->
                 <form action="/sales_order" method="POST">
                     <tr>
-                        <td><input type="date" name="orderDate" value="{{ today }}" class="oversized_input"></td>
+                        <td><input type="date" name="receivedDate" value="{{ today }}" class="oversized_input"></td>
+                        <td><input type="date" name ="orderingDate" class="oversized_input"></td>
+                        <td><input type="date" name ="completedDate" class="oversized_input"></td>
                         <td><input type="date" name ="paymentDate" class="oversized_input"></td>
-                        <td><input type="text" name="paymentMethod" autocomplete="off" class="oversized_input"></td>
-                        <td><input type="number" name="deliveryFee" value=0 autocomplete="off" class="oversized_input"></td>
-                        <td><input type="number" name="discount" value=0 autocomplete="off" class="oversized_input"></td>
-                        <td><input type="text" name="deliveryPerson" value="Đào Thị Thanh Hà" autocomplete="off" class="oversized_input"></td>
                         <td><input type="text" name="customerID" autocomplete="off" class="oversized_input"></td>
                         <td><input type="text" name="customerName" autocomplete="off" class="oversized_input" list="customers"></td>
                         <td><input type="submit" value="Add Sales Order" class="oversized_input"></td>

@@ -1,8 +1,9 @@
 # from sqlalchemy import create_engine
 from sqlalchemy import text
-from flask import Flask, request, render_template, redirect
+from flask import Flask, request, render_template, redirect, jsonify
 from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
+import traceback
 
 # Create connection and engine with mysql database
 # con_sqlalchemy = 'mysql+pymysql://thanhphaolo:duongnhatthanh@database-3.c18iwmgyqpdp.ap-southeast-2.rds.amazonaws.com:3306/product_sales'
@@ -29,8 +30,8 @@ sales_order_details = db.Table('salesorderdetails',
 
 class Customer(db.Model):
     customerID = db.Column(db.String(10), primary_key=True)
-    customerName = db.Column(db.String(30))
-    customerPhone = db.Column(db.String(10))
+    customerName = db.Column(db.String(30), nullable = False)
+    customerPhone = db.Column(db.String(10), unique=True, nullable=False)
     customerAddress = db.Column(db.String(200))
 
     def create_id():
@@ -46,7 +47,7 @@ class Customer(db.Model):
 class Supplier(db.Model):
     supplierID = db.Column(db.String(10), primary_key=True)
     supplierName = db.Column(db.String(30), nullable = False)
-    supplierPhone = db.Column(db.String(10))
+    supplierPhone = db.Column(db.String(10), unique=True, nullable=False)
     supplierAddress = db.Column(db.String(200))
 
     def create_id():
@@ -61,7 +62,7 @@ class Supplier(db.Model):
 
 class Product(db.Model):
     productID = db.Column(db.String(10), primary_key = True)
-    productName = db.Column(db.String(30))
+    productName = db.Column(db.String(30), unique=True, nullable=False)
     productCategory = db.Column(db.String(30))
     productDescription = db.Column(db.String(100))
     unit = db.Column(db.String(30))
@@ -82,7 +83,7 @@ class Product(db.Model):
 class PurchaseOrder(db.Model):
     __tablename__ = 'purchaseorder'  
     purchaseOrderID = db.Column(db.String(10), primary_key = True)
-    orderDate = db.Column(db.Date)
+    orderingDate = db.Column(db.Date)
     paymentDate = db.Column(db.Date)
     supplierID = db.Column(db.String(10), db.ForeignKey('supplier.supplierID'), nullable = False)
 
@@ -99,12 +100,10 @@ class PurchaseOrder(db.Model):
 class SalesOrder(db.Model):
     __tablename__ = 'salesorder'  
     salesOrderID = db.Column(db.String(10), primary_key = True)
-    orderDate = db.Column(db.Date)
+    receivedDate = db.Column(db.Date)
+    orderingDate = db.Column(db.Date)
+    completedDate = db.Column(db.Date)
     paymentDate = db.Column(db.Date)
-    paymentMethod = db.Column(db.String(30))
-    deliveryFee = db.Column(db.Integer)
-    discount = db.Column(db.Integer)
-    deliveryPerson = db.Column(db.String(30))
     customerID = db.Column(db.String(10), db.ForeignKey('customer.customerID'), nullable = False)
 
     def create_id():
@@ -118,10 +117,8 @@ class SalesOrder(db.Model):
         return new_id
 
 def empty_string(data):
-    if data =='':
-        return None
-    else:
-        return data
+    data = data.strip()
+    return data if data else None
 
 def date_handler(data):
     if data == '':
@@ -136,6 +133,336 @@ def index():
 @app.route('/sales_record')
 def sales_record():
     return render_template('sales_record.html')
+
+@app.route('/sales', methods=['GET'])
+def sales():
+    customers = Customer.query.all()
+    finalizingOrders = db.session.execute(
+        text(
+            """
+            SELECT SO.salesOrderID, C.customerName, P.productName, SOD.quantity, SOD.price
+            FROM PRODUCT P, CUSTOMER C, SALESORDER SO, SALESORDERDETAILS SOD
+            WHERE SO.salesOrderID = SOD.salesOrderID AND SOD.productID = P.productID 
+            AND C.customerID = SO.customerID AND SO.orderingDate IS NULL AND SO.completedDate IS NULL
+            """
+        )
+    ).fetchall()
+
+    finalizing_dict = {}
+    for order in finalizingOrders:
+        salesOrderID, customerName, productName, quantity, price = order
+
+        if salesOrderID not in finalizing_dict:
+            finalizing_dict[salesOrderID] = {'customerName': customerName, 'details': []}
+
+        finalizing_dict[salesOrderID]['details'].append({
+            "productName": productName,
+            "quantity": quantity,
+            "price": price
+        })
+
+    ordering_list = db.session.execute(
+        text(
+            """
+            SELECT S.supplierID, S.supplierName, P.productName, SUM(SOD.quantity)
+            FROM SUPPLIER S, PRODUCT P, SALESORDER SO, SALESORDERDETAILS SOD
+            WHERE S.supplierID = P.supplierID AND P.productID = SOD.productID
+            AND SO.salesOrderID = SOD.salesOrderID
+            GROUP BY S.supplierID, S.supplierName, P.productName
+            """
+        )
+    ).fetchall()
+
+    ordering_dict = {}
+    for order in ordering_list:
+        supplierID, supplierName, productName, quantity = order
+
+        if supplierID not in ordering_dict:
+            ordering_dict[supplierID] = {'supplierName': supplierName, 'details': []}
+        
+        ordering_dict[supplierID]['details'].append({
+            'productName': productName,
+            'quantity': quantity
+        })
+
+    deliveringOrders = db.session.execute(
+        text(
+            """
+            SELECT SO.salesOrderID, C.customerName, strftime('%d-%m-%Y', SO.receivedDate) AS receivedDate, 
+            P.productName, SOD.quantity, SOD.price
+            FROM PRODUCT P, CUSTOMER C, SALESORDER SO, SALESORDERDETAILS SOD
+            WHERE SO.salesOrderID = SOD.salesOrderID AND SOD.productID = P.productID 
+            AND C.customerID = SO.customerID AND SO.orderingDate IS NOT NULL AND SO.completedDate IS NULL 
+            """
+        )
+    ).fetchall()
+
+    delivering_dict = {}
+    for order in deliveringOrders:
+        salesOrderID, customerName, receivedDate, productName, quantity, price = order
+
+        if customerName not in delivering_dict:
+            delivering_dict[customerName] = {}
+
+        if receivedDate not in delivering_dict[customerName]:
+            delivering_dict[customerName][receivedDate] = []
+
+        delivering_dict[customerName][receivedDate].append({
+            "productName": productName,
+            "quantity": quantity,
+            "price": price
+        })
+    
+    products = Product.query.order_by(db.func.cast(db.func.substring(Product.productID, 2), db.Integer)).all()
+
+    return render_template('sales.html', customers = customers, 
+                           finalizingOrders = finalizing_dict.items(),
+                           ordering_list = ordering_dict.items(), 
+                           deliveringOrders = delivering_dict.items(),
+                           products = products)
+
+@app.route('/sales/new_sales_order', methods = ['POST'])    
+def new_sales_order():
+    customerName = empty_string(request.form['customerName'])
+    customerPhone = empty_string(request.form['customerPhone'])
+    customerAddress = empty_string(request.form['customerAddress'])
+    productNames = request.form.getlist('productName[]')
+    quantities = request.form.getlist('quantity[]')
+    prices = request.form.getlist('price[]')
+
+    filtered_data = [(productName, quantity, price)
+                     for productName, quantity, price in zip(productNames, quantities, prices)
+                     if empty_string(productName) and empty_string(quantity) and empty_string(price)]
+    if not filtered_data:
+        return 'No valid products entered'
+    
+    existingCustomer = Customer.query.filter_by(customerPhone = customerPhone).first()
+    
+    if not existingCustomer:
+        return render_template('new_customer.html',
+                               details = filtered_data,
+                               customerName = customerName,
+                               customerPhone = customerPhone,
+                               customerAddress = customerAddress)
+        
+    new_order = SalesOrder(
+        salesOrderID = SalesOrder.create_id(),
+        receivedDate = datetime.today().date(),
+        orderingDate = None,
+        completedDate = None,
+        paymentDate = None,
+        customerID = existingCustomer.customerID)
+        
+    try:
+        db.session.add(new_order)
+        db.session.commit()
+    except:
+        return 'There was a problem adding this sales order'
+
+    for productName, quantity, price in filtered_data:
+        product = Product.query.filter_by(productName = productName).first()
+
+        if product:
+            productID = product.productID
+            try:
+                db.session.execute(
+                    sales_order_details.insert().values(
+                        salesOrderID = new_order.salesOrderID,
+                        productID = productID,
+                        quantity = quantity,
+                        price = price))
+                db.session.commit()         
+            except:
+                return "There was a problem adding this detail"
+        else:
+            return f"Product '{productName}' not found in database."
+    
+    return redirect('/sales')  
+
+@app.route('/sales/add_customer', methods=['POST'])
+def sales_add_customer():
+    customerName = request.form['customerName']
+    customerPhone = request.form['customerPhone']
+    customerAddress = request.form['customerAddress']
+    productNames = request.form.getlist('productName[]')
+    quantities = request.form.getlist('quantity[]')
+    prices = request.form.getlist('price[]')
+
+    # Create new customer in the database
+    new_customer = Customer(
+        customerID=Customer.create_id(),
+        customerName=customerName,
+        customerPhone=customerPhone,
+        customerAddress=customerAddress
+    )
+    try:
+        db.session.add(new_customer)
+        db.session.commit()
+        customerID = new_customer.customerID
+    except:
+        return 'There was a problem adding this customer'
+        
+    new_order = SalesOrder(
+        salesOrderID = SalesOrder.create_id(),
+        receivedDate = datetime.today().date(),
+        orderingDate = None,
+        completedDate = None,
+        paymentDate = None,
+        customerID = customerID)
+        
+    try:
+        db.session.add(new_order)
+        db.session.commit()
+    except:
+        return 'There was a problem adding this sales order'
+
+    for productName, quantity, price in zip(productNames, quantities, prices):
+        product = Product.query.filter_by(productName = productName).first()
+
+        if product:
+            productID = product.productID
+            try:
+                db.session.execute(
+                    sales_order_details.insert().values(
+                        salesOrderID = new_order.salesOrderID,
+                        productID = productID,
+                        quantity = quantity,
+                        price = price))
+                db.session.commit()         
+                
+            except:
+                return 'There was a problem adding this detail'
+        else:
+            return f"Product '{productName}' not found in database."
+    
+    return redirect('/sales')  
+
+@app.route('/sales/add_product', methods = ['POST'])
+def sales_add_product():
+    salesOrderID = request.form['salesOrderID']
+    productNames = request.form.getlist('productName[]')
+    quantities = request.form.getlist('quantity[]')
+    prices = request.form.getlist('price[]')
+
+    filtered_data = [(productName, quantity, price)
+                     for productName, quantity, price in zip(productNames, quantities, prices)
+                     if empty_string(productName) and empty_string(quantity) and empty_string(price)]
+    
+    if not filtered_data:
+        return redirect('/sales')
+    
+    sales_order_to_add = SalesOrder.query.get_or_404(salesOrderID)
+
+    for productName, quantity, price in filtered_data:
+        product = Product.query.filter_by(productName = productName).first()
+
+        if product:
+            productID = product.productID
+            try:
+                db.session.execute(
+                    sales_order_details.insert().values(
+                        salesOrderID = sales_order_to_add.salesOrderID,
+                        productID = productID,
+                        quantity = quantity,
+                        price = price))
+                db.session.commit()         
+            except:
+                return "There was a problem adding this product"
+        else:
+            return f"Product '{productName}' not found in database."
+    
+    return redirect('/sales')  
+
+@app.route('/procurement', methods=['GET'])
+def procurement():
+    supplier_details = db.session.execute(
+        text(
+            """
+            SELECT S.supplierID, S.supplierName, P.productName, P.productCategory, P.productDescription, P.unit
+            FROM SUPPLIER S
+            LEFT JOIN PRODUCT P ON S.supplierID = P.supplierID
+            """
+        )
+    ).fetchall()
+
+    supplier_dict = {}
+    for detail in supplier_details:
+        supplierID, supplierName, productName, productCategory, productDescription, unit = detail
+
+        if supplierID not in supplier_dict:
+            supplier_dict[supplierID] = {'supplierName': supplierName, 'products':[]}
+
+        supplier_dict[supplierID]['products'].append({
+            "productName": productName,
+            "productCategory": productCategory,
+            "productDescription": productDescription,
+            "unit": unit
+        })
+    
+    return render_template('procurement.html', supplierDetails = supplier_dict.items())
+
+@app.route('/procurement/new_supplier', methods = ['POST'])
+def procurement_new_supplier():
+    supplierName = empty_string(request.form['supplierName'])
+    supplierPhone = empty_string(request.form['supplierPhone'])
+    supplierAddress = empty_string(request.form['supplierAddress'])
+
+    supplier = Supplier.query.filter_by(supplierPhone = supplierPhone).first()
+
+    if supplier:
+        return redirect('/procurement')
+    
+    supplier_to_add = Supplier(supplierID = Supplier.create_id(), supplierName = supplierName,
+                               supplierPhone = supplierPhone, supplierAddress = supplierAddress)
+
+    try:
+        db.session.add(supplier_to_add)
+        db.session.commit()
+    except:
+        return 'There was a problem adding this supplier'
+
+    return redirect('/procurement')    
+
+@app.route('/procurement/add_product', methods = ['POST'])
+def procurement_add_product():
+    supplierID = request.form['supplierID']
+    productNames = request.form.getlist('productName[]')
+    productCategory = request.form.getlist('productCategory[]')
+    productDescription = request.form.getlist('productDescription[]')
+    unit = request.form.getlist('unit[]')
+
+    filtered_data = [(productName, productCategory, productDescription, unit)
+                     for productName, productCategory, productDescription, unit 
+                     in zip(productNames, productCategory, productDescription, unit)
+                     if empty_string(productName)]
+    
+    if not filtered_data:
+        return redirect('/procurement')
+    
+    supplier_to_add = Supplier.query.get_or_404(supplierID)
+
+    for productName, productCategory, productDescription, unit in filtered_data:
+        try:
+            new_product = Product(productID = Product.create_id(), productName = productName,
+                                  productCategory = productCategory, productDescription = productDescription,
+                                  unit = unit, supplierID = supplier_to_add.supplierID)
+            db.session.add(new_product)
+            db.session.commit()
+        except:
+            return 'There was a problem adding this product' 
+    
+    return redirect('/procurement')
+
+@app.route('/suggest_customer', methods=['GET'])
+def get_customer():
+    name = request.args.get('name')
+    # Query the database for the existing customer
+    customer = Customer.query.filter_by(customerName=name).first()
+    
+    if customer:
+        return jsonify({"phone": customer.customerPhone, "address": customer.customerAddress})
+    
+    return jsonify({"phone": "", "address": ""})
 
 @app.route('/customer', methods = ['GET', 'POST'])
 def customer():
@@ -354,13 +681,13 @@ def update_product(id):
 def purchase_order():
     if request.method == 'POST':
         purchaseOrderID = PurchaseOrder.create_id()
-        orderDate = date_handler(request.form['orderDate'])
+        orderingDate = date_handler(request.form['orderingDate'])
         paymentDate = date_handler(request.form['paymentDate'])
         supplierID = empty_string(request.form['supplierID'])
         supplierName = empty_string(request.form['supplierName'])
 
         if supplierID:
-            new_purchase_order = PurchaseOrder(purchaseOrderID = purchaseOrderID, orderDate = orderDate,
+            new_purchase_order = PurchaseOrder(purchaseOrderID = purchaseOrderID, orderingDate = orderingDate,
                                                paymentDate = paymentDate, supplierID = supplierID)
         if supplierName:
             supplierIDs = [supplier_id[0] for supplier_id in Supplier.query.with_entities(
@@ -368,7 +695,7 @@ def purchase_order():
             if len(supplierIDs) > 1:
                 return 'You have to enter this purchase order with Supplier ID'
             elif len(supplierIDs) == 1:
-                new_purchase_order = PurchaseOrder(purchaseOrderID = purchaseOrderID, orderDate = orderDate,
+                new_purchase_order = PurchaseOrder(purchaseOrderID = purchaseOrderID, orderingDate = orderingDate,
                                                    paymentDate = paymentDate, supplierID = supplierIDs[0])
         try:
             db.session.add(new_purchase_order)
@@ -380,7 +707,7 @@ def purchase_order():
         today = datetime.today().strftime('%Y-%m-%d')
         purchase_orders = db.session.query(
             PurchaseOrder.purchaseOrderID,
-            PurchaseOrder.orderDate,
+            PurchaseOrder.orderingDate,
             PurchaseOrder.paymentDate,
             PurchaseOrder.supplierID,
             Supplier.supplierName
@@ -410,7 +737,7 @@ def delete_purchase_order(id):
 def update_purchase_order(id):
     purchase_order_to_update = PurchaseOrder.query.get_or_404(id)
     if request.method == 'POST':
-        purchase_order_to_update.orderDate = date_handler(request.form['orderDate'])
+        purchase_order_to_update.orderingDate = date_handler(request.form['orderingDate'])
         purchase_order_to_update.paymentDate = date_handler(request.form['paymentDate'])
         purchase_order_to_update.supplierID = request.form['supplierID']
 
@@ -482,31 +809,27 @@ def delete_purchase_order_details(purchaseOrderID, productID):
 def sales_order():
     if request.method == 'POST':
         salesOrderID = SalesOrder.create_id()
-        orderDate = date_handler(request.form['orderDate'])
+        receivedDate = date_handler(request.form['receivedDate'])
+        orderingDate = date_handler(request.form['orderingDate'])
         paymentDate = date_handler(request.form['paymentDate'])
-        paymentMethod = empty_string(request.form['paymentMethod'])
-        deliveryFee = request.form['deliveryFee']
-        discount = request.form['discount']
-        deliveryPerson = empty_string(request.form['deliveryPerson'])
+        completedDate = date_handler(request.form['completedDate'])
         customerID = empty_string(request.form['customerID'])
         customerName =empty_string(request.form['customerName'])
         print(customerName)
 
         if customerID:
-            new_sales_order = SalesOrder(salesOrderID = salesOrderID, orderDate = orderDate,
-                                         paymentDate = paymentDate, paymentMethod = paymentMethod,
-                                         deliveryFee = deliveryFee, discount = discount,
-                                         deliveryPerson = deliveryPerson, customerID = customerID)
+            new_sales_order = SalesOrder(salesOrderID = salesOrderID, receivedDate = receivedDate,
+                                          orderingDate = orderingDate, completedDate = completedDate, 
+                                         paymentDate = paymentDate, customerID = customerID)
         elif customerName:
             customerIDs = [customer_id[0] for customer_id in Customer.query.with_entities(
                 Customer.customerID).filter(Customer.customerName == customerName).all()]
             if len(customerIDs) >1:
                 return 'You have to enter this sales order with Customer ID'
             elif len(customerIDs) == 1:
-                new_sales_order = SalesOrder(salesOrderID = salesOrderID, orderDate = orderDate,
-                                             paymentDate = paymentDate, paymentMethod = paymentMethod,
-                                             deliveryFee = deliveryFee, discount = discount,
-                                             deliveryPerson = deliveryPerson, customerID = customerIDs[0])
+                new_sales_order = SalesOrder(salesOrderID = salesOrderID, orderingDate = orderingDate,
+                                             completedDate = completedDate, paymentDate = paymentDate, 
+                                             customerID = customerIDs[0])
         
         try:
             db.session.add(new_sales_order)
@@ -520,12 +843,10 @@ def sales_order():
         today = datetime.today().strftime('%Y-%m-%d')
         sales_orders = db.session.query(
             SalesOrder.salesOrderID,
-            SalesOrder.orderDate,
+            SalesOrder.receivedDate,
+            SalesOrder.orderingDate,
+            SalesOrder.completedDate,
             SalesOrder.paymentDate,
-            SalesOrder.paymentMethod,
-            SalesOrder.deliveryFee,
-            SalesOrder.discount,
-            SalesOrder.deliveryPerson,
             SalesOrder.customerID,
             Customer.customerName
             ).join(
@@ -553,12 +874,9 @@ def delete_sales_order(id):
 def update_sales_order(id):
     sales_order_to_update = SalesOrder.query.get_or_404(id)
     if request.method == 'POST':
-        sales_order_to_update.orderDate = date_handler(request.form['orderDate'])
+        sales_order_to_update.receivedDate = date_handler(request.form['receivedDate'])
+        sales_order_to_update.orderingDate = date_handler(request.form['orderingDate'])
         sales_order_to_update.paymentDate = date_handler(request.form['paymentDate'])
-        sales_order_to_update.paymentMethod = empty_string(request.form['paymentMethod'])
-        sales_order_to_update.deliveryFee = request.form['deliveryFee']
-        sales_order_to_update.discount = request.form['discount']
-        sales_order_to_update.deliveryPerson = empty_string(request.form['deliveryPerson'])
         sales_order_to_update.customerID = request.form['customerID']
 
         try:
@@ -641,7 +959,7 @@ def customer_debt():
 @app.route('/management/customer_debt/details/<id>')
 def customer_debt_details(id):
     results = db.session.execute(
-        text("""SELECT C.customerName, P.productName, SO.orderDate, SOD.quantity, SOD.price, SOD.quantity*SOD.price as total 
+        text("""SELECT C.customerName, P.productName, SO.receivedDate, SOD.quantity, SOD.price, SOD.quantity*SOD.price as total 
              FROM customer C, product P, salesorder SO, salesorderdetails SOD
              WHERE C.customerID = SO.customerID AND SO.salesOrderID = SOD.salesOrderID 
              AND SOD.productID = P.productID AND C.customerID = :id"""),{'id':id}
@@ -665,9 +983,9 @@ def stock():
                     WHERE 
                         PO_INNER.purchaseOrderID = POD_INNER.purchaseOrderID
                     AND 
-                        PO_INNER.orderDate = (
+                        PO_INNER.receivedDate = (
                             SELECT 
-                                MAX(PO_INNER2.orderDate) 
+                                MAX(PO_INNER2.receivedDate) 
                             FROM 
                                 purchaseorder PO_INNER2, purchaseorderdetails POD_INNER2
                             WHERE 

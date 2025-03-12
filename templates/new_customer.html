@@ -1,0 +1,40 @@
+<!-- Use Flask syntax to inherits the format of base.html -->
+{% extends 'base.html' %}
+
+<!-- Head block inheriting from base.html's head -->
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename = 'css/new_customer.css') }}">
+{% endblock %}
+
+<!-- Body block inheriting from base.html's body -->
+{% block body %}
+<main>
+    <div>
+        <form class="new__customer--form" action="/sales/add_customer" method="POST">
+            <div class="new__customer--content">
+                <input type="text" name="customerName" value="{{ customerName }}">
+                <input type="text" name="customerPhone" value="{{ customerPhone }}">
+                <input type="text" name="customerAddress" value="{{ customerAddress }}">
+                {% for productName, quantity, price in details %}
+                    <input type="text" name="productName[]" value="{{ productName }}">
+                    <input type="number" name="quantity[]" value="{{ quantity }}">
+                    <input type="number" name="price[]" value="{{ price }}">
+                {% endfor %}
+            </div>
+        </form>
+        <div class="new__customer--popup">
+            <div class="new__customer--confirmation">
+                <div class="new__customer--question">
+                    <h4>Customer not found. Do you want to add them to the database?</h4>
+                </div>
+                <div class="new__customer--answer">
+                    <button class="new__customer--yes" onclick="submitForm()">Yes</button>
+                    <a class="new__customer--no" href="/sales">No</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script src="{{ url_for('static', filename = 'js/new_customer.js') }}"></script>
+{% endblock%} 

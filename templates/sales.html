@@ -1,0 +1,168 @@
+<!-- Use Flask syntax to inherits the format of base.html -->
+{% extends 'base.html' %}
+
+<!-- Head block inheriting from base.html's head -->
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename = 'css/sales.css') }}">
+{% endblock %}
+
+<!-- Body block inheriting from base.html's body -->
+{% block body %}
+<div class="sales">
+    <div class="sales__container">
+        <h2>Finalizing</h2>
+        <div class="sales__content">
+            <div class="sales__card">
+                <span class="sales__card--plus">+</span>
+                <div class="sales__card--content">
+                    <form action="/sales/new_sales_order" method="POST">
+                        <label for="name">Name:</label>
+                        <input type="text" id="customerName" name="customerName" list="customerNames" autocomplete="off">
+                        <datalist id="customerNames">
+                            {% for customer in customers %}
+                            <option value="{{ customer.customerName }}"></option>
+                            {% endfor %}
+                        </datalist>
+    
+                        <label for="phone">Phone:</label>
+                        <input type="text" id="customerPhone" name="customerPhone" autocomplete="off">
+    
+                        <label for="address">Address:</label>
+                        <input type="text" id="customerAddress" name="customerAddress" autocomplete="off">
+
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Product Name</th>
+                                    <th>Quantity</th>
+                                    <th>Price</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody class="sales__row">
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colspan="4">
+                                        <button type="button" class="sales__row--add">+</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="4">
+                                        <input type="submit" value="Add Sales Card">
+                                    </td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </form>
+                    <datalist id="products">
+                        {% for product in products %}
+                            <option value="{{ product.productName }}"></option>
+                        {% endfor %}
+                    </datalist>
+                </div>
+            </div>
+            {% for salesOrderID, order in finalizingOrders %}
+                <div class="sales__card">
+                    <h4>Name: {{ order.customerName }}</h2>
+                    <div class="sales__card--content">
+                        <form action="/sales/add_product" method="POST">
+                            <input type="text" name="salesOrderID" value="{{ salesOrderID }}" hidden>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Product</th>
+                                        <th>Quantity</th>
+                                        <th>Price</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="sales__row">
+                                    {% for detail in order.details %}
+                                        <tr>
+                                            <td>{{ detail.productName }}</td>
+                                            <td>{{ detail.quantity }}</td>
+                                            <td>{{ detail.price }}</td>
+                                            <td></td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <td colspan="4">
+                                            <button type="button" class="sales__row--add">+</button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="4">
+                                            <input type="submit" value="Add Products">
+                                        </td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </form>
+                    </div>
+                </div>
+            {% endfor %}
+
+            <div class="sales__card">
+                <h4>Ordering List</h4>
+                <div class="sales__card--content">
+                    {% for supplierID, ordering_details in ordering_list %}
+                        <h5>Supplier Name: {{ ordering_details.supplierName }}</h5>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Product</th>
+                                    <th>Quantity</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for detail in ordering_details.details %}
+                                    <tr>
+                                        <td>{{ detail.productName }}</td>
+                                        <td>{{ detail.quantity }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="sales__container">
+        <h2>Delivering</h2>
+        <div class="sales__content">
+            {% for customerName, customerOrders in deliveringOrders %}
+                <div class="sales__card">
+                    <h4>Name: {{ customerName }}</h4>
+                    <div class="sales__card--content">
+                        {% for receivedDate, details in customerOrders.items() %}
+                            <h5>Received Date: {{ receivedDate }}</h5>
+                            <table>
+                                <tr>
+                                    <th>Product</th>
+                                    <th>Quantity</th>
+                                    <th>Price</th>
+                                </tr>
+                                {% for detail in details %}
+                                    <tr>
+                                        <td>{{ detail.productName }}</td>
+                                        <td>{{ detail.quantity }}</td>
+                                        <td>{{ detail.price }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </table>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    <h2>Completed</h2>
+</div>
+
+<script src="{{ url_for('static', filename = 'js/sales.js') }}"></script>
+{% endblock%} 
