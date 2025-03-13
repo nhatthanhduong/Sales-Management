@@ -41,7 +41,6 @@ document.querySelectorAll(".sales__row--add").forEach(button => {
         newRow.innerHTML = `
             <td><input type="text" name="productName[]" list="products" autocomplete="off"></td>
             <td><input type="number" name="quantity[]" autocomplete="off"></td>
-            <td><input type="number" name="price[]" autocomplete="off"></td>
             <td><button type="button" class="sales__row--remove">Remove</button></td>
         `;
 

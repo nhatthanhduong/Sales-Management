@@ -15,10 +15,9 @@
                 <input type="text" name="customerName" value="{{ customerName }}">
                 <input type="text" name="customerPhone" value="{{ customerPhone }}">
                 <input type="text" name="customerAddress" value="{{ customerAddress }}">
-                {% for productName, quantity, price in details %}
+                {% for productName, quantity in details %}
                     <input type="text" name="productName[]" value="{{ productName }}">
                     <input type="number" name="quantity[]" value="{{ quantity }}">
-                    <input type="number" name="price[]" value="{{ price }}">
                 {% endfor %}
             </div>
         </form>

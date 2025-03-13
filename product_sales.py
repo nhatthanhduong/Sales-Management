@@ -19,14 +19,12 @@ db = SQLAlchemy(app)
 purchase_order_details = db.Table('purchaseorderdetails',
                                   db.Column('purchaseOrderID', db.String(10), db.ForeignKey('purchaseorder.purchaseOrderID'), primary_key = True),
                                   db.Column('productID', db.String(10), db.ForeignKey('product.productID'), primary_key = True),
-                                  db.Column('quantity', db.Integer),
-                                  db.Column('price', db.Integer))
+                                  db.Column('quantity', db.Integer))
 
 sales_order_details = db.Table('salesorderdetails',
                                   db.Column('salesOrderID', db.String(10), db.ForeignKey('salesorder.salesOrderID'), primary_key = True),
                                   db.Column('productID', db.String(10), db.ForeignKey('product.productID'), primary_key = True),
-                                  db.Column('quantity', db.Integer),
-                                  db.Column('price', db.Integer))
+                                  db.Column('quantity', db.Integer))
 
 class Customer(db.Model):
     customerID = db.Column(db.String(10), primary_key=True)
@@ -66,6 +64,8 @@ class Product(db.Model):
     productCategory = db.Column(db.String(30))
     productDescription = db.Column(db.String(100))
     unit = db.Column(db.String(30))
+    purchasingPrice = db.Column(db.Integer, nullable = False)
+    sellingPrice = db.Column(db.Integer, nullable = False)
     supplierID = db.Column(db.String(10), db.ForeignKey('supplier.supplierID'), nullable = False)
     purchaseOrders = db.relationship('PurchaseOrder', secondary = purchase_order_details, backref = 'products')
     salesOrders = db.relationship('SalesOrder', secondary = sales_order_details, backref = 'products')
@@ -140,7 +140,7 @@ def sales():
     finalizingOrders = db.session.execute(
         text(
             """
-            SELECT SO.salesOrderID, C.customerName, P.productName, SOD.quantity, SOD.price
+            SELECT SO.salesOrderID, C.customerName, P.productName, SOD.quantity, P.sellingPrice
             FROM PRODUCT P, CUSTOMER C, SALESORDER SO, SALESORDERDETAILS SOD
             WHERE SO.salesOrderID = SOD.salesOrderID AND SOD.productID = P.productID 
             AND C.customerID = SO.customerID AND SO.orderingDate IS NULL AND SO.completedDate IS NULL
@@ -189,7 +189,7 @@ def sales():
         text(
             """
             SELECT SO.salesOrderID, C.customerName, strftime('%d-%m-%Y', SO.receivedDate) AS receivedDate, 
-            P.productName, SOD.quantity, SOD.price
+            P.productName, SOD.quantity, P.sellingPrice
             FROM PRODUCT P, CUSTOMER C, SALESORDER SO, SALESORDERDETAILS SOD
             WHERE SO.salesOrderID = SOD.salesOrderID AND SOD.productID = P.productID 
             AND C.customerID = SO.customerID AND SO.orderingDate IS NOT NULL AND SO.completedDate IS NULL 
@@ -221,6 +221,11 @@ def sales():
                            deliveringOrders = delivering_dict.items(),
                            products = products)
 
+# @app.route('/sales/place_an_order', methods = ['POST'])
+# def place_an_order():
+#     supplierID = request.form['supplierID']
+#     supplier_to_update = Supplier.query.get_or_404(supplierID)
+
 @app.route('/sales/new_sales_order', methods = ['POST'])    
 def new_sales_order():
     customerName = empty_string(request.form['customerName'])
@@ -228,11 +233,10 @@ def new_sales_order():
     customerAddress = empty_string(request.form['customerAddress'])
     productNames = request.form.getlist('productName[]')
     quantities = request.form.getlist('quantity[]')
-    prices = request.form.getlist('price[]')
 
-    filtered_data = [(productName, quantity, price)
-                     for productName, quantity, price in zip(productNames, quantities, prices)
-                     if empty_string(productName) and empty_string(quantity) and empty_string(price)]
+    filtered_data = [(productName, quantity)
+                     for productName, quantity in zip(productNames, quantities)
+                     if empty_string(productName) and empty_string(quantity)]
     if not filtered_data:
         return 'No valid products entered'
     
@@ -259,7 +263,7 @@ def new_sales_order():
     except:
         return 'There was a problem adding this sales order'
 
-    for productName, quantity, price in filtered_data:
+    for productName, quantity in filtered_data:
         product = Product.query.filter_by(productName = productName).first()
 
         if product:
@@ -269,8 +273,7 @@ def new_sales_order():
                     sales_order_details.insert().values(
                         salesOrderID = new_order.salesOrderID,
                         productID = productID,
-                        quantity = quantity,
-                        price = price))
+                        quantity = quantity))
                 db.session.commit()         
             except:
                 return "There was a problem adding this detail"
@@ -286,7 +289,6 @@ def sales_add_customer():
     customerAddress = request.form['customerAddress']
     productNames = request.form.getlist('productName[]')
     quantities = request.form.getlist('quantity[]')
-    prices = request.form.getlist('price[]')
 
     # Create new customer in the database
     new_customer = Customer(
@@ -316,7 +318,7 @@ def sales_add_customer():
     except:
         return 'There was a problem adding this sales order'
 
-    for productName, quantity, price in zip(productNames, quantities, prices):
+    for productName, quantity in zip(productNames, quantities):
         product = Product.query.filter_by(productName = productName).first()
 
         if product:
@@ -326,8 +328,7 @@ def sales_add_customer():
                     sales_order_details.insert().values(
                         salesOrderID = new_order.salesOrderID,
                         productID = productID,
-                        quantity = quantity,
-                        price = price))
+                        quantity = quantity))
                 db.session.commit()         
                 
             except:
@@ -342,18 +343,17 @@ def sales_add_product():
     salesOrderID = request.form['salesOrderID']
     productNames = request.form.getlist('productName[]')
     quantities = request.form.getlist('quantity[]')
-    prices = request.form.getlist('price[]')
 
-    filtered_data = [(productName, quantity, price)
-                     for productName, quantity, price in zip(productNames, quantities, prices)
-                     if empty_string(productName) and empty_string(quantity) and empty_string(price)]
+    filtered_data = [(productName, quantity)
+                     for productName, quantity in zip(productNames, quantities)
+                     if empty_string(productName) and empty_string(quantity)]
     
     if not filtered_data:
         return redirect('/sales')
     
     sales_order_to_add = SalesOrder.query.get_or_404(salesOrderID)
 
-    for productName, quantity, price in filtered_data:
+    for productName, quantity in filtered_data:
         product = Product.query.filter_by(productName = productName).first()
 
         if product:
@@ -363,8 +363,7 @@ def sales_add_product():
                     sales_order_details.insert().values(
                         salesOrderID = sales_order_to_add.salesOrderID,
                         productID = productID,
-                        quantity = quantity,
-                        price = price))
+                        quantity = quantity))
                 db.session.commit()         
             except:
                 return "There was a problem adding this product"
@@ -378,7 +377,8 @@ def procurement():
     supplier_details = db.session.execute(
         text(
             """
-            SELECT S.supplierID, S.supplierName, P.productName, P.productCategory, P.productDescription, P.unit
+            SELECT S.supplierID, S.supplierName, P.productName, P.productCategory, P.productDescription, P.unit,
+            P.purchasingPrice, P.sellingPrice
             FROM SUPPLIER S
             LEFT JOIN PRODUCT P ON S.supplierID = P.supplierID
             """
@@ -387,7 +387,7 @@ def procurement():
 
     supplier_dict = {}
     for detail in supplier_details:
-        supplierID, supplierName, productName, productCategory, productDescription, unit = detail
+        supplierID, supplierName, productName, productCategory, productDescription, unit, purchasingPrice, sellingPrice = detail
 
         if supplierID not in supplier_dict:
             supplier_dict[supplierID] = {'supplierName': supplierName, 'products':[]}
@@ -396,7 +396,9 @@ def procurement():
             "productName": productName,
             "productCategory": productCategory,
             "productDescription": productDescription,
-            "unit": unit
+            "unit": unit,
+            "purchasingPrice": purchasingPrice,
+            "sellingPrice": sellingPrice
         })
     
     return render_template('procurement.html', supplierDetails = supplier_dict.items())
@@ -430,22 +432,26 @@ def procurement_add_product():
     productCategory = request.form.getlist('productCategory[]')
     productDescription = request.form.getlist('productDescription[]')
     unit = request.form.getlist('unit[]')
+    purchasingPrice = request.form.getlist('purchasingPrice[]')
+    sellingPrice = request.form.getlist('sellingPrice[]')
 
-    filtered_data = [(productName, productCategory, productDescription, unit)
-                     for productName, productCategory, productDescription, unit 
-                     in zip(productNames, productCategory, productDescription, unit)
-                     if empty_string(productName)]
+    filtered_data = [(productName, empty_string(productCategory), empty_string(productDescription), 
+                      empty_string(unit), purchasingPrice, sellingPrice)
+                     for productName, productCategory, productDescription, unit, purchasingPrice, sellingPrice 
+                     in zip(productNames, productCategory, productDescription, unit, purchasingPrice, sellingPrice)
+                     if empty_string(productName) and empty_string(purchasingPrice) and empty_string(sellingPrice)]
     
     if not filtered_data:
         return redirect('/procurement')
     
     supplier_to_add = Supplier.query.get_or_404(supplierID)
 
-    for productName, productCategory, productDescription, unit in filtered_data:
+    for productName, productCategory, productDescription, unit, purchasingPrice, sellingPrice in filtered_data:
         try:
             new_product = Product(productID = Product.create_id(), productName = productName,
                                   productCategory = productCategory, productDescription = productDescription,
-                                  unit = unit, supplierID = supplier_to_add.supplierID)
+                                  unit = unit, purchasingPrice = purchasingPrice, sellingPrice = sellingPrice, 
+                                  supplierID = supplier_to_add.supplierID)
             db.session.add(new_product)
             db.session.commit()
         except:
@@ -599,6 +605,8 @@ def product():
         productCategory = empty_string(request.form['productCategory'])
         productDescription = empty_string(request.form['productDescription'])
         unit = empty_string(request.form['unit'])
+        purchasingPrice = empty_string(request.form['purchasingPrice'])
+        sellingPrice = empty_string(request.form['sellingPrice'])
         supplierID = empty_string(request.form['supplierID'])
         supplierName = empty_string(request.form['supplierName'])
 
@@ -610,7 +618,8 @@ def product():
             if supplierID:
                 new_product = Product(productID = productID, productName = productName,
                                       productCategory = productCategory, productDescription = productDescription,
-                                      unit = unit, supplierID = supplierID)
+                                      unit = unit, purchasingPrice = purchasingPrice, sellingPrice = sellingPrice, 
+                                      supplierID = supplierID)
             elif supplierName:
                 supplierIDs = [supplier_id[0] for supplier_id in Supplier.query.with_entities(
                     Supplier.supplierID).filter(Supplier.supplierName == supplierName).all()]
@@ -619,7 +628,8 @@ def product():
                 elif len(supplierIDs) == 1:
                     new_product = Product(productID = productID, productName = productName,
                                           productCategory = productCategory, productDescription = productDescription,
-                                          unit = unit, supplierID = supplierIDs[0])
+                                          unit = unit, purchasingPrice = purchasingPrice, sellingPrice = sellingPrice,
+                                          supplierID = supplierIDs[0])
                 else:
                     return 'Supplier Name does not exist'
             try:
@@ -638,6 +648,8 @@ def product():
             Product.productCategory,
             Product.productDescription,
             Product.unit,
+            Product.purchasingPrice,
+            Product.sellingPrice,
             Product.supplierID,
             Supplier.supplierName
         ).join(
@@ -668,6 +680,8 @@ def update_product(id):
         product_to_update.productCategory = empty_string(request.form['productCategory'])
         product_to_update.productDescription = empty_string(request.form['productDescription'])
         product_to_update.unit = empty_string(request.form['unit'])
+        product_to_update.purchasingPrice = empty_string(request.form['purchasingPrice'])
+        product_to_update.sellingPrice = empty_string(request.form['sellingPrice'])
         product_to_update.supplierID = request.form['supplierID']
         try:
             db.session.commit()
@@ -758,15 +772,13 @@ def add_products_purchase_order(id):
         purchaseOrderID = purchase_order_to_add.purchaseOrderID
         productID = product.productID
         quantity = request.form['quantity']
-        price = request.form['price']
 
         try:
             db.session.execute(
                 purchase_order_details.insert().values(
                     purchaseOrderID = purchaseOrderID,
                     productID = productID,
-                    quantity = quantity,
-                    price = price))
+                    quantity = quantity))
             db.session.commit()
             return redirect(f'/purchase_order/add_products/{id}')
         
@@ -777,7 +789,7 @@ def add_products_purchase_order(id):
                                    purchase_order_details.c.productID,
                                    Product.productName,
                                    purchase_order_details.c.quantity,
-                                   purchase_order_details.c.price
+                                   Product.purchasingPrice
                                    ).join(Product, purchase_order_details.c.productID == Product.productID).filter(
                                        purchase_order_details.c.purchaseOrderID == id
                                    ).all()
@@ -896,15 +908,13 @@ def add_products_sales_order(id):
         salesOrderID = sales_order_to_add.salesOrderID
         productID = product.productID
         quantity = request.form['quantity']
-        price = request.form['price']
 
         try:
             db.session.execute(
                 sales_order_details.insert().values(
                     salesOrderID = salesOrderID,
                     productID = productID,
-                    quantity = quantity,
-                    price = price))
+                    quantity = quantity))
             db.session.commit()
             return redirect(f'/sales_order/add_products/{id}')
         
@@ -915,7 +925,7 @@ def add_products_sales_order(id):
                                    sales_order_details.c.productID,
                                    Product.productName,
                                    sales_order_details.c.quantity,
-                                   sales_order_details.c.price
+                                   Product.sellingPrice
                                    ).join(Product, sales_order_details.c.productID == Product.productID).filter(
                                        sales_order_details.c.salesOrderID == id
                                    ).all()

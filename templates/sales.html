@@ -10,7 +10,7 @@
 {% block body %}
 <div class="sales">
     <div class="sales__container">
-        <h2>Finalizing</h2>
+        <h2>Managing</h2>
         <div class="sales__content">
             <div class="sales__card">
                 <span class="sales__card--plus">+</span>
@@ -35,7 +35,6 @@
                                 <tr>
                                     <th>Product Name</th>
                                     <th>Quantity</th>
-                                    <th>Price</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
@@ -43,12 +42,12 @@
                             </tbody>
                             <tfoot>
                                 <tr>
-                                    <td colspan="4">
+                                    <td colspan="3">
                                         <button type="button" class="sales__row--add">+</button>
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td colspan="4">
+                                    <td colspan="3">
                                         <input type="submit" value="Add Sales Card">
                                     </td>
                                 </tr>
@@ -62,6 +61,39 @@
                     </datalist>
                 </div>
             </div>
+            <div class="sales__card">
+                <i class="fas fa-clipboard-list"></i>
+                <div class="sales__card--content">
+                    {% for supplierID, ordering_details in ordering_list %}
+                        <h5>Supplier Name: {{ ordering_details.supplierName }}</h5>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Product</th>
+                                    <th>Quantity</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for detail in ordering_details.details %}
+                                    <tr>
+                                        <td>{{ detail.productName }}</td>
+                                        <td>{{ detail.quantity }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table><br>
+                        <form action="sales/place_an_order">
+                            <input type="text" name="supplierID" value="{{ supplierID }}" hidden>
+                            <input type="submit" value="Place An Order">
+                        </form>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="sales__container">
+        <h2>Finalizing</h2>
+        <div class="sales__content">
             {% for salesOrderID, order in finalizingOrders %}
                 <div class="sales__card">
                     <h4>Name: {{ order.customerName }}</h2>
@@ -104,31 +136,6 @@
                     </div>
                 </div>
             {% endfor %}
-
-            <div class="sales__card">
-                <h4>Ordering List</h4>
-                <div class="sales__card--content">
-                    {% for supplierID, ordering_details in ordering_list %}
-                        <h5>Supplier Name: {{ ordering_details.supplierName }}</h5>
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Product</th>
-                                    <th>Quantity</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for detail in ordering_details.details %}
-                                    <tr>
-                                        <td>{{ detail.productName }}</td>
-                                        <td>{{ detail.quantity }}</td>
-                                    </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    {% endfor %}
-                </div>
-            </div>
         </div>
     </div>
     

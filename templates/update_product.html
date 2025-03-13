@@ -16,6 +16,8 @@
             <th>Category</th>
             <th>Description</th>
             <th>Unit</th>
+            <th>Purchasing Price</th>
+            <th>Selling Price</th>
             <th>Supplier ID</th>
         </tr>
         <form action="/product/update/{{ product.productID }}" method="POST">
@@ -24,6 +26,8 @@
             <td><input type="text" name="productCategory" value="{{ product.productCategory }}" autocomplete="off"></td>
             <td><input type="text" name ="productDescription" value="{{ product.productDescription }}" autocomplete="off"></td>
             <td><input type="text" name="unit" value="{{ product.unit }}" autocomplete="off"></td>
+            <td><input type="number" name="purchasingPrice" value="{{ product.purchasingPrice }}" autocomplete="off"></td>
+            <td><input type="number" name="sellingPrice" value="{{ product.sellingPrice }}" autocomplete="off"></td>
             <td><input type="text" name="supplierID" value="{{ product.supplierID }}" autocomplete="off"></td>
             <td><input type="submit" value="Update"></td>
         </tr>

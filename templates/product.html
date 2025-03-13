@@ -18,6 +18,8 @@
                     <th>Category</th>
                     <th>Description</th>
                     <th>Unit</th>
+                    <th>Purchasing Price</th>
+                    <th>Selling Price</th>
                     <th>Supplier ID</th>
                     <th>Supplier Name</th>
                     <th>Actions</th>
@@ -29,6 +31,8 @@
                         <td>{{ product.productCategory }}</td>
                         <td>{{ product.productDescription }}</td>
                         <td>{{ product.unit }}</td>
+                        <td>{{ product.purchasingPrice }}</td>
+                        <td>{{ product.sellingPrice }}</td>
                         <td>{{ product.supplierID }}</td>
                         <td>{{ product.supplierName }}</td>
                         <td>
@@ -48,6 +52,8 @@
                         <td><input type="text" name="productCategory" autocomplete="off" class="oversized_input"></td>
                         <td><input type="text" name = "productDescription" autocomplete="off" class="oversized_input"></td>
                         <td><input type="text" name="unit" autocomplete="off" class="oversized_input"></td>
+                        <td><input type="number" name="purchasingPrice" autocomplete="off" class="oversized_input"></td>
+                        <td><input type="number" name="sellingPrice" autocomplete="off" class="oversized_input"></td>
                         <td><input type="text" name="supplierID" autocomplete="off" class="oversized_input"></td>
                         <td><input type="text" name="supplierName" autocomplete="off" class="oversized_input" list="suppliers"></td>
                         <td><input type="submit" value="Add Product" class="oversized_input"></td>

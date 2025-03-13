@@ -26,7 +26,7 @@
                         <td>{{ row.productID }}</td>
                         <td>{{ row.productName }}</td>
                         <td>{{ row.quantity }}</td>
-                        <td>{{ row.price }}</td>
+                        <td>{{ row.purchasingPrice }}</td>
                         <td>
                             <!-- Pass customer's id to the URL, which the python function uses to determine the customer to delete -->
                             <a id="action", href="/purchase_order/add_products/delete/{{ row.purchaseOrderID }}/{{ row.productID }}">Delete</a>
@@ -40,7 +40,7 @@
                         <td></td>
                         <td><input type="text" name="productName" list = "products" autocomplete="off"></td>
                         <td><input type="number" name="quantity" autocomplete="off"></td>
-                        <td><input type="number" name ="price"></td>
+                        <td></td>
                         <td><input type="submit" value="Add Product"></td>
                     </tr>
                 </form>

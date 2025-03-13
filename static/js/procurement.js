@@ -31,6 +31,8 @@ document.querySelectorAll(".procurement__row--add").forEach(button => {
             <td><input type="text" name="productCategory[]" autocomplete="off"></td>
             <td><input type="text" name="productDescription[]" autocomplete="off"></td>
             <td><input type="text" name="unit[]" autocomplete="off"></td>
+            <td><input type="text" name="purchasingPrice[]" autocomplete="off"></td>
+            <td><input type="text" name="sellingPrice[]" autocomplete="off"></td>
             <td><button type="button" class="procurement__row--remove">Remove</button></td>
         `;
 

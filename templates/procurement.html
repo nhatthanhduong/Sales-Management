@@ -42,6 +42,8 @@
                                         <th>Category</th>
                                         <th>Description</th>
                                         <th>Unit</th>
+                                        <th>Purchasing Price</th>
+                                        <th>Selling Price</th>
                                         <th>Actions</th>
                                     </tr>
                                 </thead>
@@ -52,18 +54,20 @@
                                             <td>{{ product.productCategory }}</td>
                                             <td>{{ product.productDescription }}</td>
                                             <td>{{ product.unit }}</td>
+                                            <td>{{ product.purchasingPrice }}</td>
+                                            <td>{{ product.sellingPrice }}</td>
                                             <td></td>
                                         </tr>
                                     {% endfor %}
                                 </tbody>
                                 <tfoot>
                                     <tr>
-                                        <td colspan="5">
+                                        <td colspan="7">
                                             <button type="button" class="procurement__row--add">+</button>
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td colspan="5">
+                                        <td colspan="7">
                                             <input type="submit" value="Add Products">
                                         </td>
                                     </tr>

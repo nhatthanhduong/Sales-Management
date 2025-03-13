@@ -74,6 +74,16 @@
     font-size: 75px;
 }
 
-.sales__card.expanded .sales__card--plus {
+.fas.fa-clipboard-list {
+    max-width: 100%;
+    font-weight: bold;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 45px;
+}
+
+.sales__card.expanded .sales__card--plus,
+.sales__card.expanded .fas.fa-clipboard-list {
     display: none;
 }
