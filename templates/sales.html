@@ -64,29 +64,31 @@
             <div class="sales__card">
                 <i class="fas fa-clipboard-list"></i>
                 <div class="sales__card--content">
-                    {% for supplierID, ordering_details in ordering_list %}
-                        <h5>Supplier Name: {{ ordering_details.supplierName }}</h5>
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Product</th>
-                                    <th>Quantity</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for detail in ordering_details.details %}
+                    <form action="/sales/place_an_order" method="POST">
+                        {% for supplierID, ordering_details in ordering_list %}
+                            <h5>Supplier Name: {{ ordering_details.supplierName }}</h5>
+                            <table>
+                                <thead>
                                     <tr>
-                                        <td>{{ detail.productName }}</td>
-                                        <td>{{ detail.quantity }}</td>
+                                        <th>Product</th>
+                                        <th>Quantity</th>
                                     </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table><br>
-                        <form action="sales/place_an_order">
-                            <input type="text" name="supplierID" value="{{ supplierID }}" hidden>
-                            <input type="submit" value="Place An Order">
-                        </form>
-                    {% endfor %}
+                                </thead>
+                                <tbody>
+                                    {% for detail in ordering_details.details %}
+                                        <tr>
+                                            <td>{{ detail.productName }}</td>
+                                            <td>{{ detail.quantity }}</td>
+                                        </tr>
+                                        <input type="text" name="supplierID[]" value="{{ supplierID }}" hidden>
+                                        <input type="text" name="productID[]" value="{{ detail.productID }}" hidden>
+                                        <input type="number" name="quantity[]" value="{{ detail.quantity }}" hidden>
+                                    {% endfor %}
+                                </tbody>
+                            </table><br>
+                        {% endfor %}
+                        <input type="submit" value="Place An Order">
+                    </form>
                 </div>
             </div>
         </div>

@@ -137,6 +137,32 @@ def sales_record():
 @app.route('/sales', methods=['GET'])
 def sales():
     customers = Customer.query.all()
+
+    ordering_list = db.session.execute(
+        text(
+            """
+            SELECT S.supplierID, S.supplierName, P.productID, P.productName, SUM(SOD.quantity)
+            FROM SUPPLIER S, PRODUCT P, SALESORDER SO, SALESORDERDETAILS SOD
+            WHERE S.supplierID = P.supplierID AND P.productID = SOD.productID
+            AND SO.salesOrderID = SOD.salesOrderID AND SO.orderingDate IS NULL
+            GROUP BY S.supplierID, S.supplierName, P.productID, P.productName
+            """
+        )
+    ).fetchall()
+
+    ordering_dict = {}
+    for order in ordering_list:
+        supplierID, supplierName, productID, productName, quantity = order
+
+        if supplierID not in ordering_dict:
+            ordering_dict[supplierID] = {'supplierName': supplierName, 'details': []}
+        
+        ordering_dict[supplierID]['details'].append({
+            'productID': productID,
+            'productName': productName,
+            'quantity': quantity
+        })
+
     finalizingOrders = db.session.execute(
         text(
             """
@@ -159,30 +185,6 @@ def sales():
             "productName": productName,
             "quantity": quantity,
             "price": price
-        })
-
-    ordering_list = db.session.execute(
-        text(
-            """
-            SELECT S.supplierID, S.supplierName, P.productName, SUM(SOD.quantity)
-            FROM SUPPLIER S, PRODUCT P, SALESORDER SO, SALESORDERDETAILS SOD
-            WHERE S.supplierID = P.supplierID AND P.productID = SOD.productID
-            AND SO.salesOrderID = SOD.salesOrderID
-            GROUP BY S.supplierID, S.supplierName, P.productName
-            """
-        )
-    ).fetchall()
-
-    ordering_dict = {}
-    for order in ordering_list:
-        supplierID, supplierName, productName, quantity = order
-
-        if supplierID not in ordering_dict:
-            ordering_dict[supplierID] = {'supplierName': supplierName, 'details': []}
-        
-        ordering_dict[supplierID]['details'].append({
-            'productName': productName,
-            'quantity': quantity
         })
 
     deliveringOrders = db.session.execute(
@@ -221,10 +223,53 @@ def sales():
                            deliveringOrders = delivering_dict.items(),
                            products = products)
 
-# @app.route('/sales/place_an_order', methods = ['POST'])
-# def place_an_order():
-#     supplierID = request.form['supplierID']
-#     supplier_to_update = Supplier.query.get_or_404(supplierID)
+@app.route('/sales/place_an_order', methods = ['POST'])
+def place_an_order():
+    supplierIDs = request.form.getlist('supplierID[]')
+    productIDs = request.form.getlist('productID[]')
+    quantities = request.form.getlist('quantity[]')
+    
+    ordering_dict = {}
+    for supplierID, productID, quantity in zip(supplierIDs, productIDs, quantities):
+        if supplierID not in ordering_dict:
+            ordering_dict[supplierID] = []
+        ordering_dict[supplierID].append({
+            'productID': productID,
+            'quantity': quantity
+        })
+    
+    for supplierID, details in ordering_dict.items():
+        try:
+            new_order = PurchaseOrder(
+                purchaseOrderID = PurchaseOrder.create_id(),
+                orderingDate = datetime.today().date(),
+                paymentDate = None,
+                supplierID = supplierID
+            )
+            db.session.add(new_order)
+            db.session.commit()
+        except:
+            return f'There was a problem ordering from {Supplier.query.get(supplierID).supplierName}'
+        for detail in details:
+            try:
+                db.session.execute(
+                    purchase_order_details.insert().values(
+                        purchaseOrderID = new_order.purchaseOrderID,
+                        productID = detail['productID'],
+                        quantity = detail['quantity']))
+                db.session.commit()
+            except:
+                return f"There was a problem ordering {Product.query.get(detail['productID']).productName}"
+            
+    try:
+        SalesOrder.query.filter_by(orderingDate = None).update(
+            {'orderingDate': datetime.today().date()}
+        )
+        db.session.commit()
+    except:
+        return 'There was a problem updating sales order'
+    
+    return redirect('/sales')
 
 @app.route('/sales/new_sales_order', methods = ['POST'])    
 def new_sales_order():
