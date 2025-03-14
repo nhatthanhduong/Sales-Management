@@ -415,7 +415,23 @@ def sales_add_product():
         else:
             return f"Product '{productName}' not found in database."
     
-    return redirect('/sales')  
+    return redirect('/sales')
+
+@app.route('/sales/deliver_an_order', methods = ['POST'])
+def deliver_an_order():
+    customerName = request.form['customerName']
+    receivedDate = request.form['receivedDate']
+    
+    customerID = Customer.query.filter_by(customerName = customerName).first().customerID
+    receivedDate = datetime.strptime(receivedDate, "%d-%m-%Y").date()
+    try:
+        SalesOrder.query.filter_by(customerID = customerID, receivedDate = receivedDate).update(
+            {'completedDate': datetime.today().date()}
+        )
+        db.session.commit()
+    except Exception as e:
+        return str(e)
+    return redirect('/sales')
 
 @app.route('/procurement', methods=['GET'])
 def procurement():

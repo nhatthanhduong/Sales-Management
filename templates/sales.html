@@ -149,21 +149,27 @@
                     <h4>Name: {{ customerName }}</h4>
                     <div class="sales__card--content">
                         {% for receivedDate, details in customerOrders.items() %}
-                            <h5>Received Date: {{ receivedDate }}</h5>
-                            <table>
-                                <tr>
-                                    <th>Product</th>
-                                    <th>Quantity</th>
-                                    <th>Price</th>
-                                </tr>
-                                {% for detail in details %}
+                            <form action="/sales/deliver_an_order" method="POST">
+                                <h5>Received Date: {{ receivedDate }}</h5>
+                                <table>
                                     <tr>
-                                        <td>{{ detail.productName }}</td>
-                                        <td>{{ detail.quantity }}</td>
-                                        <td>{{ detail.price }}</td>
+                                        <th>Product</th>
+                                        <th>Quantity</th>
+                                        <th>Price</th>
                                     </tr>
-                                {% endfor %}
-                            </table>
+                                    {% for detail in details %}
+                                        <tr>
+                                            <td>{{ detail.productName }}</td>
+                                            <td>{{ detail.quantity }}</td>
+                                            <td>{{ detail.price }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </table><br>
+                                <input type="text" name="customerName" value="{{ customerName }}" hidden>
+                                <input type="text" name="receivedDate" value="{{ receivedDate }}" hidden>
+                                <input type="submit" value="Delivered">
+                            </form>
+                            
                         {% endfor %}
                     </div>
                 </div>
