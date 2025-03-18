@@ -38,7 +38,6 @@
                         <td>
                             <!-- Pass supplier's id to the URL, which the python function uses to determine the supplier to delete -->
                             <a id="action", href="/product/delete/{{ product.productID }}">Delete</a>
-                            <br>
                             <!-- Pass supplier's id to the URL, which the python function uses to determine the supplier to update -->
                             <a id="action", href="/product/update/{{ product.productID }}">Update</a>
                         </td>
@@ -48,15 +47,15 @@
                 <!-- Get user's input for new supplier and send it to the main route for python program -->
                 <form action="/product" method="POST">
                     <tr>
-                        <td><input type="text" name="productName" autocomplete="off" class="oversized_input"></td>
-                        <td><input type="text" name="productCategory" autocomplete="off" class="oversized_input"></td>
-                        <td><input type="text" name = "productDescription" autocomplete="off" class="oversized_input"></td>
-                        <td><input type="text" name="unit" autocomplete="off" class="oversized_input"></td>
-                        <td><input type="number" name="purchasingPrice" autocomplete="off" class="oversized_input"></td>
-                        <td><input type="number" name="sellingPrice" autocomplete="off" class="oversized_input"></td>
-                        <td><input type="text" name="supplierID" autocomplete="off" class="oversized_input"></td>
-                        <td><input type="text" name="supplierName" autocomplete="off" class="oversized_input" list="suppliers"></td>
-                        <td><input type="submit" value="Add Product" class="oversized_input"></td>
+                        <td><input type="text" name="productName" autocomplete="off"></td>
+                        <td><input type="text" name="productCategory" autocomplete="off"></td>
+                        <td><input type="text" name = "productDescription" autocomplete="off"></td>
+                        <td><input type="text" name="unit" autocomplete="off"></td>
+                        <td><input type="number" name="purchasingPrice" autocomplete="off"></td>
+                        <td><input type="number" name="sellingPrice" autocomplete="off"></td>
+                        <td><input type="text" name="supplierID" autocomplete="off"></td>
+                        <td><input type="text" name="supplierName" autocomplete="off" list="suppliers"></td>
+                        <td><input type="submit" value="Add Product"></td>
                     </tr>
                 </form>
                 <datalist id="suppliers">

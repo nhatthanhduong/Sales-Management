@@ -138,14 +138,49 @@ def sales_record():
 def sales():
     customers = Customer.query.all()
 
+    stock_list = db.session.execute(
+        text(
+            """
+            SELECT 
+                P.productName, COALESCE(PURCHASED.quantity, 0) - COALESCE(SOLD.quantity, 0) AS quantity
+            FROM PRODUCT P
+            LEFT JOIN (
+                SELECT productID, SUM(quantity) AS quantity 
+                FROM PURCHASEORDERDETAILS 
+                GROUP BY productID
+            ) PURCHASED ON P.productID = PURCHASED.productID
+            LEFT JOIN (
+                SELECT SOD.productID, SUM(SOD.quantity) AS quantity 
+                FROM SALESORDERDETAILS SOD 
+                JOIN SALESORDER SO ON SOD.salesOrderID = SO.salesOrderID
+                WHERE SO.orderingDate IS NOT NULL
+                GROUP BY SOD.productID
+            ) SOLD ON P.productID = SOLD.productID
+            WHERE COALESCE(PURCHASED.quantity, 0) - COALESCE(SOLD.quantity, 0) > 0
+            """
+        )
+    ).fetchall()
+
     ordering_list = db.session.execute(
         text(
             """
-            SELECT S.supplierID, S.supplierName, P.productID, P.productName, SUM(SOD.quantity)
-            FROM SUPPLIER S, PRODUCT P, SALESORDER SO, SALESORDERDETAILS SOD
-            WHERE S.supplierID = P.supplierID AND P.productID = SOD.productID
-            AND SO.salesOrderID = SOD.salesOrderID AND SO.orderingDate IS NULL
-            GROUP BY S.supplierID, S.supplierName, P.productID, P.productName
+            SELECT 
+                S.supplierID, S.supplierName, P.productID, P.productName, 
+                COALESCE(SOLD.quantity, 0) - COALESCE(PURCHASED.quantity, 0) AS quantity
+            FROM SUPPLIER S, PRODUCT P
+            LEFT JOIN (
+                SELECT productID, SUM(quantity) AS quantity 
+                FROM PURCHASEORDERDETAILS 
+                GROUP BY productID
+            ) PURCHASED ON P.productID = PURCHASED.productID
+            LEFT JOIN (
+                SELECT productID, SUM(quantity) AS quantity 
+                FROM SALESORDERDETAILS
+                GROUP BY productID
+            ) SOLD ON P.productID = SOLD.productID
+            WHERE 
+                S.supplierID = P.supplierID
+                AND COALESCE(SOLD.quantity, 0) - COALESCE(PURCHASED.quantity, 0) > 0
             """
         )
     ).fetchall()
@@ -166,22 +201,24 @@ def sales():
     finalizingOrders = db.session.execute(
         text(
             """
-            SELECT SO.salesOrderID, C.customerName, P.productName, SOD.quantity, P.sellingPrice
-            FROM PRODUCT P, CUSTOMER C, SALESORDER SO, SALESORDERDETAILS SOD
-            WHERE SO.salesOrderID = SOD.salesOrderID AND SOD.productID = P.productID 
-            AND C.customerID = SO.customerID AND SO.orderingDate IS NULL AND SO.completedDate IS NULL
+            SELECT SO.salesOrderID, C.customerName, P.productID, P.productName, SOD.quantity, P.sellingPrice
+            FROM SALESORDER SO, CUSTOMER C
+            LEFT JOIN SALESORDERDETAILS SOD ON SO.salesOrderID = SOD.salesOrderID
+            LEFT JOIN PRODUCT P ON SOD.productID = P.productID
+            WHERE C.customerID = SO.customerID AND SO.orderingDate IS NULL AND SO.completedDate IS NULL
             """
         )
     ).fetchall()
 
     finalizing_dict = {}
     for order in finalizingOrders:
-        salesOrderID, customerName, productName, quantity, price = order
+        salesOrderID, customerName, productID, productName, quantity, price = order
 
         if salesOrderID not in finalizing_dict:
             finalizing_dict[salesOrderID] = {'customerName': customerName, 'details': []}
 
         finalizing_dict[salesOrderID]['details'].append({
+            "productID": productID,
             "productName": productName,
             "quantity": quantity,
             "price": price
@@ -190,8 +227,8 @@ def sales():
     deliveringOrders = db.session.execute(
         text(
             """
-            SELECT SO.salesOrderID, C.customerName, strftime('%d-%m-%Y', SO.receivedDate) AS receivedDate, 
-            P.productName, SOD.quantity, P.sellingPrice
+            SELECT SO.salesOrderID, C.customerName, strftime('%d-%m-%Y', SO.receivedDate) AS receivedDate,
+            P.productID, P.productName, SOD.quantity, P.sellingPrice
             FROM PRODUCT P, CUSTOMER C, SALESORDER SO, SALESORDERDETAILS SOD
             WHERE SO.salesOrderID = SOD.salesOrderID AND SOD.productID = P.productID 
             AND C.customerID = SO.customerID AND SO.orderingDate IS NOT NULL AND SO.completedDate IS NULL 
@@ -201,15 +238,16 @@ def sales():
 
     delivering_dict = {}
     for order in deliveringOrders:
-        salesOrderID, customerName, receivedDate, productName, quantity, price = order
+        salesOrderID, customerName, receivedDate, productID, productName, quantity, price = order
 
         if customerName not in delivering_dict:
             delivering_dict[customerName] = {}
 
-        if receivedDate not in delivering_dict[customerName]:
-            delivering_dict[customerName][receivedDate] = []
+        if salesOrderID not in delivering_dict[customerName]:
+            delivering_dict[customerName][salesOrderID] = {'receivedDate': receivedDate, 'details': []}
 
-        delivering_dict[customerName][receivedDate].append({
+        delivering_dict[customerName][salesOrderID]['details'].append({
+            "productID": productID,
             "productName": productName,
             "quantity": quantity,
             "price": price
@@ -217,9 +255,10 @@ def sales():
     
     products = Product.query.order_by(db.func.cast(db.func.substring(Product.productID, 2), db.Integer)).all()
 
-    return render_template('sales.html', customers = customers, 
-                           finalizingOrders = finalizing_dict.items(),
+    return render_template('sales.html', customers = customers,
+                           stock_list = stock_list,
                            ordering_list = ordering_dict.items(), 
+                           finalizingOrders = finalizing_dict.items(),
                            deliveringOrders = delivering_dict.items(),
                            products = products)
 
@@ -329,9 +368,9 @@ def new_sales_order():
 
 @app.route('/sales/add_customer', methods=['POST'])
 def sales_add_customer():
-    customerName = request.form['customerName']
-    customerPhone = request.form['customerPhone']
-    customerAddress = request.form['customerAddress']
+    customerName = empty_string(request.form['customerName'])
+    customerPhone = empty_string(request.form['customerPhone'])
+    customerAddress = empty_string(request.form['customerAddress'])
     productNames = request.form.getlist('productName[]')
     quantities = request.form.getlist('quantity[]')
 
@@ -381,39 +420,117 @@ def sales_add_customer():
         else:
             return f"Product '{productName}' not found in database."
     
-    return redirect('/sales')  
+    return redirect('/sales')
 
-@app.route('/sales/add_product', methods = ['POST'])
-def sales_add_product():
+@app.route('/sales/update_finalizing_order', methods = ['POST'])
+def sales_update_finalizing_order():
     salesOrderID = request.form['salesOrderID']
-    productNames = request.form.getlist('productName[]')
-    quantities = request.form.getlist('quantity[]')
+    action = request.form['action']
 
-    filtered_data = [(productName, quantity)
-                     for productName, quantity in zip(productNames, quantities)
-                     if empty_string(productName) and empty_string(quantity)]
+    if action == 'Update Order':
+        productNames = request.form.getlist('productName[]')
+        quantities = request.form.getlist('quantity[]')
+
+        filtered_data = [(productName, quantity)
+                        for productName, quantity in zip(productNames, quantities)
+                        if empty_string(productName) and empty_string(quantity)]
+        
+        if not filtered_data:
+            return redirect('/sales')
+        
+        try:
+            db.session.execute(
+                sales_order_details.delete().where(
+                    sales_order_details.c.salesOrderID == salesOrderID
+                )
+            )
+            db.session.commit()
+        except:
+            return 'There was a problem updating this order'
+        
+        for productName, quantity in filtered_data:
+            product = Product.query.filter_by(productName = productName).first()
+            if product:
+                productID = product.productID
+                try:
+                    db.session.execute(
+                        sales_order_details.insert().values(
+                            salesOrderID = salesOrderID,
+                            productID = productID,
+                            quantity = quantity))
+                    db.session.commit()         
+                except Exception as e:
+                    return str(e)
+            else:
+                return f"Product '{productName}' not found in database."
+
+    if action == 'delete':
+        productID = request.form['productID']
+        try:
+            stmt = sales_order_details.delete().where(
+                (sales_order_details.c.salesOrderID == salesOrderID) &
+                (sales_order_details.c.productID == productID)
+            )
+            db.session.execute(stmt)
+            db.session.commit()
+        except Exception as e:
+            return str(e)
     
-    if not filtered_data:
-        return redirect('/sales')
-    
-    sales_order_to_add = SalesOrder.query.get_or_404(salesOrderID)
+    return redirect('/sales')
 
-    for productName, quantity in filtered_data:
-        product = Product.query.filter_by(productName = productName).first()
+@app.route('/sales/update_delivering_order', methods = ['POST'])
+def sales_update_delivering_order():
+    salesOrderID = request.form['salesOrderID']
+    action = request.form['action']
 
-        if product:
-            productID = product.productID
-            try:
-                db.session.execute(
-                    sales_order_details.insert().values(
-                        salesOrderID = sales_order_to_add.salesOrderID,
-                        productID = productID,
-                        quantity = quantity))
-                db.session.commit()         
-            except:
-                return "There was a problem adding this product"
-        else:
-            return f"Product '{productName}' not found in database."
+    if action == 'Update Order':
+        productNames = request.form.getlist('productName[]')
+        quantities = request.form.getlist('quantity[]')
+
+        filtered_data = [(productName, quantity)
+                        for productName, quantity in zip(productNames, quantities)
+                        if empty_string(productName) and empty_string(quantity)]
+        
+        if not filtered_data:
+            return redirect('/sales')
+        
+        try:
+            db.session.execute(
+                sales_order_details.delete().where(
+                    sales_order_details.c.salesOrderID == salesOrderID
+                )
+            )
+            db.session.commit()
+        except:
+            return 'There was a problem updating this order'
+        
+        for productName, quantity in filtered_data:
+            product = Product.query.filter_by(productName = productName).first()
+            if product:
+                productID = product.productID
+                try:
+                    db.session.execute(
+                        sales_order_details.insert().values(
+                            salesOrderID = salesOrderID,
+                            productID = productID,
+                            quantity = quantity))
+                    db.session.commit()         
+                except Exception as e:
+                    return str(e)
+            else:
+                return f"Product '{productName}' not found in database."
+
+    if action == 'delete':
+        productID = request.form['productID']
+        try:
+            stmt = sales_order_details.delete().where(
+                (sales_order_details.c.salesOrderID == salesOrderID) &
+                (sales_order_details.c.productID == productID)
+            )
+            db.session.execute(stmt)
+            db.session.commit()
+        except Exception as e:
+            return str(e)
     
     return redirect('/sales')
 

@@ -16,11 +16,8 @@
             <th>Ordering Date</th>
             <th>Completed Date</th>
             <th>Payment Date</th>
-            <th>Payment Method</th>
-            <th>Delivery Fee</th>
-            <th>Discount</th>
-            <th>Delivery Person</th>
             <th>Customer ID</th>
+            <th>Action</th>
         </tr>
         <form action="/sales_order/update/{{ sales_order.salesOrderID }}" method="POST">
         <tr>
@@ -28,10 +25,6 @@
             <td><input type="date" name="orderingDate" value="{{ sales_order.orderingDate }}"></td>
             <td><input type="date" name="completedDate" value="{{ sales_order.completedDate }}"></td>
             <td><input type="date" name="paymentDate" value="{{ sales_order.paymentDate }}"></td>
-            <td><input type="text" name ="paymentMethod" value="{{ sales_order.paymentMethod }}" autocomplete="off"></td>
-            <td><input type="number" name ="deliveryFee" value="{{ sales_order.deliveryFee }}" autocomplete="off"></td>
-            <td><input type="number" name ="discount" value="{{ sales_order.discount }}" autocomplete="off"></td>
-            <td><input type="text" name ="deliveryPerson" value="{{ sales_order.deliveryPerson }}" autocomplete="off"></td>
             <td><input type="text" name ="customerID" value="{{ sales_order.customerID }}" autocomplete="off"></td>
             <td><input type="submit" value="Update"></td>
         </tr>

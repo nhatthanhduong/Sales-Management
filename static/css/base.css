@@ -1,15 +1,16 @@
 body {
     box-sizing: border-box;
-    font-family: Arial, Helvetica, sans-serif;
-    background-color: #e9f5db;
+    font-family: "Poppins", sans-serif;
+    background-color: #dce3d2;
     margin: 0;
     padding: 0;
+    color: #4a4a4a;
 }
 
 /* Navbar CSS */
 .navbar__container {
     overflow: hidden;
-    background-color: #718355;
+    background-color: #2f3e2a;
     height: 50px;
     font-family: Arial, Helvetica, sans-serif;
     display: flex; /* Enable flexbox */
@@ -27,7 +28,7 @@ body {
 /* Links inside the navbar__container */
 .navbar__container a {
     font-size: 1rem;
-    color: white;
+    color: #eef2ea;
     padding: 14px 16px;
     text-decoration: none;
 }
@@ -42,27 +43,27 @@ body {
     display: block;
     font-size: 1rem;
     border: none;
-    color: white;
+    color: #eef2ea;
     padding: 14px 16px;
 }
 
 /* Add a red background color to navbar__container links on hover */
 .navbar__container a:hover, .navbar__dropdown:hover .navbar__dropdown--button {
-    background-color: #87986a;
+    background-color: #4a5d3a;
 }
 
 /* navbar__dropdown content (hidden by default) */
 .navbar__dropdown--content {
     display: none;
     position: absolute;
-    background-color: #cfe1b9;
+    background-color: #3d4c36;
     box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
     z-index: 1;
 }
 
 /* Links inside the navbar__dropdown */
 .navbar__dropdown--content a {
-    color: black;
+    color: #eef2ea;
     padding: 12px 16px;
     text-decoration: none;
     display: block;
@@ -71,7 +72,7 @@ body {
 
 /* Add a grey background color to navbar__dropdown links on hover */
 .navbar__dropdown--content a:hover {
-    background-color: #b5c99a;
+    background-color: #5a6e4f;
 }
 
 /* Show the navbar__dropdown menu on hover */
@@ -92,7 +93,7 @@ body {
         position: absolute;
         top: -100%;
         left: 0;
-        background: #718355;
+        background: #2f3e2a;
         opacity: 0;
         transition: all 0.5s ease-in-out;
         height: auto;
@@ -122,7 +123,7 @@ body {
         height: 3px;
         margin: 5px auto;
         transition: all 0.3s ease-in-out;
-        background: #fff;
+        background: #eef2ea;
         display: block;
     }
 
@@ -137,36 +138,126 @@ body {
     }
 }
 
-h1 {
-    text-align: center;
-}
-th, td {
-    text-align: center;
-}
-
-#action {
-    color: #155E95;
-}
-#action:hover {
-    color: #C84C05;
+/* Form Styling */
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
 }
 
-table {
-    border-collapse: collapse;
-    border: 3px solid #87986A;
-    width: 100%; /* Adjust to fit within the container */
+label {
+    font-weight: 600;
+    margin-bottom: 5px;
 }
 
-th, td {
-    border: 2px solid #87986A;
-}
 input {
-    padding: 3px; /* Adjust padding for a snug fit */
-    box-sizing: border-box; /* Include padding and border in the element's width */
-    font-size: inherit; /* Match the font size of the table */
-    text-align: center; /* Align input text to match table style */
-    width: 100%;
+    width: 95%;
+    padding: 10px;
+    border: 2px solid #ddd;
+    border-radius: 6px;
+    box-sizing: border-box;
+    font-size: 16px;
+    transition: border-color 0.3s ease-in-out;
+    text-align: center;
+    background-color: #eef2ea;
 }
 
+input:focus {
+    border-color: #5f6d4b;
+    outline: none;
+    background-color: #eef2ea;
+}
 
+/* Table Styling */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    border: 2px solid #8a9d72;
+}
+
+th, td {
+    padding: 12px 4px;
+    text-align: center;
+    border: 2px solid #8a9d72;
+}
+
+th {
+    background-color: #5b7d63;
+    color: #eef2ea;
+}
+
+/* Buttons */
+button, input[type="submit"] {
+    background: #5b7d63;
+    color: #eef2ea;
+    border: none;
+    padding: 10px 15px;
+    font-size: 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.3s ease-in-out, transform 0.2s ease-in-out;
+}
+
+button:hover, input[type="submit"]:hover {
+    background: #4b664f;
+    transform: scale(1.05);
+}
+
+a[id="action"] {
+    background: #5b7d63;
+    color: #eef2ea;
+    padding: 6px 9px;
+    margin: 2px auto;
+    font-size: 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    text-decoration: none; /* Remove underline from links */
+    display: inline-block; /* Make links behave like buttons */
+    transition: background 0.3s ease-in-out, transform 0.2s ease-in-out;
+}
+
+a[id="action"]:hover {
+    background: #4b664f;
+}
+
+/* Floating Button for Adding Sales */
+.sales__row--add {
+    background: #6a9c78;
+    font-size: 18px;
+    font-weight: bold;
+    padding: 10px 15px;
+}
+
+.sales__row--add:hover {
+    background: #5a8864;
+}
+
+.searchBar {
+    width: 100%;
+    max-width: 400px;
+    padding: 12px 16px;
+    border: 2px solid #5f6d4b;
+    border-radius: 25px;
+    box-sizing: border-box;
+    font-size: 16px;
+    transition: all 0.3s ease-in-out;
+    background-color: #eef2ea;
+    color: #4a4a4a;
+    outline: none;
+    text-align: left;
+    display: block;
+    margin: 15px auto;
+}
+
+.searchBar::placeholder {
+    color: #7a8a65;
+    font-style: italic;
+}
+
+.searchBar:focus {
+    border-color: #3f4d33;
+    background-color: #f5f8f0;
+    box-shadow: 0 0 8px rgba(95, 109, 75, 0.5);
+}
 

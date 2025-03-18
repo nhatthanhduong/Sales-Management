@@ -30,10 +30,8 @@
                         <td>
                             <!-- Pass supplier's id to the URL, which the python function uses to determine the supplier to delete -->
                             <a id="action", href="/purchase_order/delete/{{ purchase_order.purchaseOrderID }}">Delete</a>
-                            <br>
                             <!-- Pass supplier's id to the URL, which the python function uses to determine the supplier to update -->
                             <a id="action", href="/purchase_order/update/{{ purchase_order.purchaseOrderID }}">Update</a>
-                            <br>
                             <a id="action", href="/purchase_order/add_products/{{ purchase_order.purchaseOrderID}}">Add Products</a>
                         </td>
                     </tr>

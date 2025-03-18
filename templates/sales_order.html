@@ -34,10 +34,8 @@
                         <td>
                             <!-- Pass supplier's id to the URL, which the python function uses to determine the supplier to delete -->
                             <a id="action", href="/sales_order/delete/{{ sales_order.salesOrderID }}">Delete</a>
-                            <br>
                             <!-- Pass supplier's id to the URL, which the python function uses to determine the supplier to update -->
                             <a id="action", href="/sales_order/update/{{ sales_order.salesOrderID }}">Update</a>
-                            <br>
                             <a id="action", href="/sales_order/add_products/{{ sales_order.salesOrderID}}">Add Products</a>
                         </td>
                     </tr>
@@ -46,13 +44,13 @@
                 <!-- Get user's input for new supplier and send it to the main route for python program -->
                 <form action="/sales_order" method="POST">
                     <tr>
-                        <td><input type="date" name="receivedDate" value="{{ today }}" class="oversized_input"></td>
-                        <td><input type="date" name ="orderingDate" class="oversized_input"></td>
-                        <td><input type="date" name ="completedDate" class="oversized_input"></td>
-                        <td><input type="date" name ="paymentDate" class="oversized_input"></td>
-                        <td><input type="text" name="customerID" autocomplete="off" class="oversized_input"></td>
-                        <td><input type="text" name="customerName" autocomplete="off" class="oversized_input" list="customers"></td>
-                        <td><input type="submit" value="Add Sales Order" class="oversized_input"></td>
+                        <td><input type="date" name="receivedDate" value="{{ today }}"></td>
+                        <td><input type="date" name ="orderingDate"></td>
+                        <td><input type="date" name ="completedDate"></td>
+                        <td><input type="date" name ="paymentDate"></td>
+                        <td><input type="text" name="customerID" autocomplete="off"></td>
+                        <td><input type="text" name="customerName" autocomplete="off" list="customers"></td>
+                        <td><input type="submit" value="Add Sales Order"></td>
                     </tr>
                 </form>
                 <datalist id="customers">
