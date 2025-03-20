@@ -1174,64 +1174,6 @@ def delete_sales_order_details(salesOrderID, productID):
         print(f"Error: {e}")
         return 'There was a problem deleting this product'
 
-@app.route('/management')
-def management():
-    return render_template('management.html')
-
-@app.route('/management/customer_debt')
-def customer_debt():
-    results = db.session.execute(
-        text("""SELECT C.customerID, C.customerName, SOD.quantity*SOD.price as debt 
-             FROM customer C, salesorder SO, salesorderdetails SOD
-             WHERE C.customerID = SO.customerID AND SO.salesOrderID = SOD.salesOrderID""")
-    )
-    return render_template('customer_debt.html', results = results)
-
-@app.route('/management/customer_debt/details/<id>')
-def customer_debt_details(id):
-    results = db.session.execute(
-        text("""SELECT C.customerName, P.productName, SO.receivedDate, SOD.quantity, SOD.price, SOD.quantity*SOD.price as total 
-             FROM customer C, product P, salesorder SO, salesorderdetails SOD
-             WHERE C.customerID = SO.customerID AND SO.salesOrderID = SOD.salesOrderID 
-             AND SOD.productID = P.productID AND C.customerID = :id"""),{'id':id}
-    )
-    return render_template('customer_debt_details.html', results = results)
-
-@app.route('/management/stock')
-def stock():
-    results = list(db.session.execute(
-        text("""
-            SELECT 
-                P.productName, 
-                SUM(POD.quantity)-SUM(SOD.quantity) as quantity,
-                (SUM(POD.quantity)-SUM(SOD.quantity))*LATESTPRICE.price as totalPrice
-            FROM 
-                product P, purchaseorderdetails POD, salesorderdetails SOD, (
-                    SELECT 
-                        POD_INNER.productID, POD_INNER.price 
-                    FROM 
-                        purchaseorder PO_INNER, purchaseorderdetails POD_INNER
-                    WHERE 
-                        PO_INNER.purchaseOrderID = POD_INNER.purchaseOrderID
-                    AND 
-                        PO_INNER.receivedDate = (
-                            SELECT 
-                                MAX(PO_INNER2.receivedDate) 
-                            FROM 
-                                purchaseorder PO_INNER2, purchaseorderdetails POD_INNER2
-                            WHERE 
-                                PO_INNER2.purchaseOrderID = POD_INNER2.purchaseOrderID
-                            AND 
-                                POD_INNER.productID = POD_INNER2.productID)) LATESTPRICE
-            WHERE 
-                P.productID = SOD.productID AND P.productID = POD.productID 
-            AND 
-                LATESTPRICE.productID = P.productID
-            GROUP BY P.productName, LATESTPRICE.price"""))
-    )
-    total_value = sum(row.totalPrice for row in results)
-    return render_template('stock.html', results = results, total_value = total_value)
-
 @app.route('/database')
 def database():
     return render_template('database.html')
