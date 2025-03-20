@@ -1,34 +1,36 @@
 /* Home CSS */
 .home {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Dynamic columns */
+    grid-template-columns: repeat(auto-fit, minmax(275px, 1fr)); /* Dynamic columns */
     justify-items: center;
     align-items: center;
-    row-gap: 20px;
-    column-gap: 40px;
+    row-gap: 25px;
+    column-gap: 50px;
     padding: 20px;
 }
 
 .home__card {
-    background-color: #87986A;
+    background: linear-gradient(135deg, #3d5a40, #2a3b1d);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
     text-decoration: none;
-    border-radius: 15px;
+    border-radius: 25px;
 }
 
 .home__card--container {
     display: flex;
     flex-direction: column;
     align-items: center;
-    background-color: #b5c99a;
-    color: black;
+    background-color: #5b7d63;
+    color: #eef2ea;
     font-size: 30px;
     font-weight: bold;
-    border-radius: 15px;
+    border-radius: 25px;
     margin: 15px;
 }
 
 .home__card--container img {
-    width: 300px;  /* Adjust size as needed */
-    height: 300px; /* Adjust size as needed */
+    width: 250px;  /* Adjust size as needed */
+    height: 250px; /* Adjust size as needed */
     margin: 15px;
+    filter: invert(95%) sepia(5%) saturate(500%) hue-rotate(70deg);
 }

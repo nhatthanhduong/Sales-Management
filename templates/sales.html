@@ -18,7 +18,7 @@
                 <div class="sales__card--content">
                     <form action="/sales/new_sales_order" method="POST">
                         <label for="name">Name:</label>
-                        <input type="text" id="customerName" name="customerName" list="customerNames" autocomplete="off">
+                        <input type="text" id="customerName" name="customerName" list="customerNames" autocomplete="off" required>
                         <datalist id="customerNames">
                             {% for customer in customers %}
                             <option value="{{ customer.customerName }}"></option>
@@ -30,7 +30,6 @@
     
                         <label for="address">Address:</label>
                         <input type="text" id="customerAddress" name="customerAddress" autocomplete="off">
-                        <br><br>
 
                         <table>
                             <thead>
@@ -63,8 +62,9 @@
                     </datalist>
                 </div>
             </div>
+
             <div class="sales__card">
-                <i class="fas fa-clipboard-list"></i>
+                <i class="fas fa-warehouse"></i>
                 <div class="sales__card--content">
                     <h3>In stock</h3>
                     <table>
@@ -79,31 +79,41 @@
                             </tr>
                         {% endfor %}
                     </table>
+                </div>
+            </div>
 
+            <div class="sales__card">
+                <i class="fas fa-clipboard-list"></i>
+                <div class="sales__card--content">
                         <form action="/sales/place_an_order" method="POST">
                         {% for supplierID, ordering_details in ordering_list %}
-                            <h5>Supplier Name: {{ ordering_details.supplierName }}</h5>
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>Product</th>
-                                        <th>Quantity</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% for detail in ordering_details.details %}
+                            <div class="sales__card--partition">
+                                <h3>Supplier Name: {{ ordering_details.supplierName }}</h3>
+                                <table>
+                                    <thead>
                                         <tr>
-                                            <td>{{ detail.productName }}</td>
-                                            <td>{{ detail.quantity }}</td>
+                                            <th>Product</th>
+                                            <th>Quantity</th>
                                         </tr>
-                                        <input type="text" name="supplierID[]" value="{{ supplierID }}" hidden>
-                                        <input type="text" name="productID[]" value="{{ detail.productID }}" hidden>
-                                        <input type="number" name="quantity[]" value="{{ detail.quantity }}" hidden>
-                                    {% endfor %}
-                                </tbody>
-                            </table><br>
+                                    </thead>
+                                    <tbody>
+                                        {% for detail in ordering_details.details %}
+                                            <tr>
+                                                <td>{{ detail.productName }}</td>
+                                                <td>{{ detail.quantity }}</td>
+                                            </tr>
+                                            <input type="text" name="supplierID[]" value="{{ supplierID }}" hidden>
+                                            <input type="text" name="productID[]" value="{{ detail.productID }}" hidden>
+                                            <input type="number" name="quantity[]" value="{{ detail.quantity }}" hidden>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
                         {% endfor %}
-                        <input type="submit" value="Place An Order">
+                        <div class="sales__card--delivered">
+                            <input type="submit" value="Place An Order">
+                        </div>
+                        
                     </form>
                 </div>
             </div>
@@ -134,7 +144,7 @@
                                             <td>{{ detail.productName }}</td>
                                             <td>
                                                 <input type="text" name="productName[]" value="{{ detail.productName }}" hidden>
-                                                <input type="number" name="quantity[]" value="{{ detail.quantity }}">
+                                                <input type="number" name="quantity[]" value="{{ detail.quantity }}" required>
                                             </td>
                                             <td>{{ detail.price }}</td>
                                             <td>
@@ -174,16 +184,82 @@
                     <h4>Name: {{ customerName }}</h4>
                     <div class="sales__card--content">
                         {% for salesOrderID, order in customerOrders.items() %}
-                            <h5>Received Date: {{ order.receivedDate }}</h5>
-                            <form action="/sales/update_delivering_order" method="POST">
-                                <input type="text" name="salesOrderID" value="{{ salesOrderID }}" hidden>
+                            <div class="sales__card--partition">
+                                <h5>Received Date: {{ order.receivedDate }}</h5>
+                                <form action="/sales/update_delivering_order" method="POST">
+                                    <input type="text" name="salesOrderID" value="{{ salesOrderID }}" hidden>
+                                    <table>
+                                        <thead>
+                                            <tr>
+                                                <th>Product</th>
+                                                <th>Quantity</th>
+                                                <th>Price</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        
+                                        <tbody class="sales__row">
+                                            {% for detail in order.details %}
+                                                <tr>
+                                                    <td>{{ detail.productName }}</td>
+                                                    <td>
+                                                        <input type="text" name="productName[]" value="{{ detail.productName }}" hidden>
+                                                        <input type="number" name="quantity[]" value="{{ detail.quantity }}" required>
+                                                    </td>
+                                                    <td>{{ detail.price }}</td>
+                                                    <td>
+                                                        <button type="button" onclick="deleteProduct('{{ salesOrderID }}', '{{ detail.productID }}', 'delivering')">
+                                                            Delete
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+
+                                        <tfoot>
+                                            <tr>
+                                                <td colspan="4">
+                                                    <button type="button" class="sales__row--add">+</button>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="4">
+                                                    <input type="submit" name="action" value="Update Order">
+                                                </td>
+                                            </tr>
+                                        </tfoot>
+                                        
+                                    </table><br>
+                                </form>
+                                
+                                <form class="sales__card--delivered" action="/sales/deliver_an_order" method="POST">
+                                    <input type="text" name="salesOrderID" value="{{ salesOrderID }}" hidden>
+                                    <input type="submit" value="Delivered">
+                                </form>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="sales__container">
+        <h2>Unpaid</h2>
+        <div class="sales__content">
+            {% for customerName, customerOrders in unpaidOrders %}
+                <div class="sales__card">
+                    <h4>Name: {{ customerName }}</h4>
+                    <div class="sales__card--content">
+                        {% for salesOrderID, order in customerOrders.items() %}
+                            <div class="sales__card--partition">
+                                <h5>Delivering Date: {{ order.completedDate }}</h5>
                                 <table>
                                     <thead>
                                         <tr>
                                             <th>Product</th>
                                             <th>Quantity</th>
                                             <th>Price</th>
-                                            <th>Actions</th>
                                         </tr>
                                     </thead>
                                     
@@ -191,52 +267,32 @@
                                         {% for detail in order.details %}
                                             <tr>
                                                 <td>{{ detail.productName }}</td>
-                                                <td>
-                                                    <input type="text" name="productName[]" value="{{ detail.productName }}" hidden>
-                                                    <input type="number" name="quantity[]" value="{{ detail.quantity }}">
-                                                </td>
+                                                <td>{{ detail.quantity }}</td>
                                                 <td>{{ detail.price }}</td>
-                                                <td>
-                                                    <button type="button" onclick="deleteProduct('{{ salesOrderID }}', '{{ detail.productID }}', 'delivering')">
-                                                        Delete
-                                                    </button>
-                                                </td>
                                             </tr>
                                         {% endfor %}
                                     </tbody>
-
-                                    <tfoot>
-                                        <tr>
-                                            <td colspan="4">
-                                                <button type="button" class="sales__row--add">+</button>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td colspan="4">
-                                                <input type="submit" name="action" value="Update Order">
-                                            </td>
-                                        </tr>
-                                    </tfoot>
-                                    
                                 </table><br>
-                            </form>
-                            
-                            <form class="sales__card--delivered" action="/sales/deliver_an_order" method="POST">
-                                <input type="text" name="customerName" value="{{ customerName }}" hidden>
-                                <input type="text" name="receivedDate" value="{{ order.receivedDate }}" hidden>
-                                <input type="submit" value="Delivered">
-                            </form>
-                            
+
+                                <form class="sales__card--delivered" action="/sales/pay_an_order" method="POST">
+                                    <input type="text" name="salesOrderID" value="{{ salesOrderID }}" hidden>
+                                    <input type="submit" value="Paid">
+                                </form>
+                            </div>
                         {% endfor %}
                     </div>
                 </div>
             {% endfor %}
         </div>
     </div>
-    <h2>Completed</h2>
-    <div class="button__container">
-        <a class="button" href="/sales_order">View All Orders</a>
+
+    <div class="sales__container">
+        <h2>Completed</h2>
+        <div class="button__container">
+            <a class="button" href="/sales_order">View All Orders</a>
+        </div>
     </div>
+    
 </div>
 
 <script src="{{ url_for('static', filename = 'js/sales.js') }}"></script>

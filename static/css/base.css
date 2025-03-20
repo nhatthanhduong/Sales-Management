@@ -100,6 +100,12 @@ body {
         z-index: 99;
     }
 
+    .navbar__menu a {
+        display: block;
+        width: 100%;
+        text-align: center;
+    }
+
     .navbar__dropdown--content a {
         text-align: center;
     }
@@ -181,15 +187,18 @@ th, td {
     text-align: center;
     border: 2px solid #8a9d72;
 }
+tr:nth-child(even) {
+    background-color: rgba(255, 255, 255, 0.2);
+}
 
 th {
-    background-color: #5b7d63;
+    background-color: #4f6b57;
     color: #eef2ea;
 }
 
 /* Buttons */
 button, input[type="submit"] {
-    background: #5b7d63;
+    background: #6aac89;
     color: #eef2ea;
     border: none;
     padding: 10px 15px;
@@ -200,7 +209,7 @@ button, input[type="submit"] {
 }
 
 button:hover, input[type="submit"]:hover {
-    background: #4b664f;
+    background: #72a986;
     transform: scale(1.05);
 }
 
@@ -223,14 +232,14 @@ a[id="action"]:hover {
 
 /* Floating Button for Adding Sales */
 .sales__row--add {
-    background: #6a9c78;
+    background: #6aac89;
     font-size: 18px;
     font-weight: bold;
     padding: 10px 15px;
 }
 
 .sales__row--add:hover {
-    background: #5a8864;
+    background: #72a986;
 }
 
 .searchBar {

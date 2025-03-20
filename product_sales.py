@@ -1,5 +1,5 @@
 # from sqlalchemy import create_engine
-from sqlalchemy import text
+from sqlalchemy import text, CheckConstraint
 from flask import Flask, request, render_template, redirect, jsonify
 from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
@@ -19,12 +19,14 @@ db = SQLAlchemy(app)
 purchase_order_details = db.Table('purchaseorderdetails',
                                   db.Column('purchaseOrderID', db.String(10), db.ForeignKey('purchaseorder.purchaseOrderID'), primary_key = True),
                                   db.Column('productID', db.String(10), db.ForeignKey('product.productID'), primary_key = True),
-                                  db.Column('quantity', db.Integer))
+                                  db.Column('quantity', db.Integer, nullable = False),
+                                  CheckConstraint('quantity >= 1', name='check_quantity_min_1'))
 
 sales_order_details = db.Table('salesorderdetails',
                                   db.Column('salesOrderID', db.String(10), db.ForeignKey('salesorder.salesOrderID'), primary_key = True),
                                   db.Column('productID', db.String(10), db.ForeignKey('product.productID'), primary_key = True),
-                                  db.Column('quantity', db.Integer))
+                                  db.Column('quantity', db.Integer, nullable = False),
+                                  CheckConstraint('quantity >= 1', name='check_quantity_min_1'))
 
 class Customer(db.Model):
     customerID = db.Column(db.String(10), primary_key=True)
@@ -129,10 +131,6 @@ def date_handler(data):
 @app.route('/')
 def index():
     return render_template('index.html')
-
-@app.route('/sales_record')
-def sales_record():
-    return render_template('sales_record.html')
 
 @app.route('/sales', methods=['GET'])
 def sales():
@@ -252,6 +250,42 @@ def sales():
             "quantity": quantity,
             "price": price
         })
+
+    unpaidOrders = db.session.execute(
+        text(
+            """
+            SELECT 
+                SO.salesOrderID, C.customerName, 
+                strftime('%d-%m-%Y', SO.completedDate) AS completedDate,
+                P.productID, P.productName, SOD.quantity, P.sellingPrice
+            FROM 
+                PRODUCT P, CUSTOMER C, SALESORDER SO, SALESORDERDETAILS SOD
+            WHERE 
+                SO.salesOrderID = SOD.salesOrderID 
+                AND SOD.productID = P.productID 
+                AND C.customerID = SO.customerID
+                AND SO.completedDate IS NOT NULL
+                AND SO.paymentDate IS NULL
+            """
+        )
+    )
+
+    unpaid_dict = {}
+    for order in unpaidOrders:
+        salesOrderID, customerName, completedDate, productID, productName, quantity, price = order
+
+        if customerName not in unpaid_dict:
+            unpaid_dict[customerName] = {}
+
+        if salesOrderID not in unpaid_dict[customerName]:
+            unpaid_dict[customerName][salesOrderID] = {'completedDate': completedDate, 'details': []}
+
+        unpaid_dict[customerName][salesOrderID]['details'].append({
+            "productID": productID,
+            "productName": productName,
+            "quantity": quantity,
+            "price": price
+        })
     
     products = Product.query.order_by(db.func.cast(db.func.substring(Product.productID, 2), db.Integer)).all()
 
@@ -260,6 +294,7 @@ def sales():
                            ordering_list = ordering_dict.items(), 
                            finalizingOrders = finalizing_dict.items(),
                            deliveringOrders = delivering_dict.items(),
+                           unpaidOrders = unpaid_dict.items(),
                            products = products)
 
 @app.route('/sales/place_an_order', methods = ['POST'])
@@ -536,15 +571,23 @@ def sales_update_delivering_order():
 
 @app.route('/sales/deliver_an_order', methods = ['POST'])
 def deliver_an_order():
-    customerName = request.form['customerName']
-    receivedDate = request.form['receivedDate']
+    salesOrderID = request.form['salesOrderID']
     
-    customerID = Customer.query.filter_by(customerName = customerName).first().customerID
-    receivedDate = datetime.strptime(receivedDate, "%d-%m-%Y").date()
     try:
-        SalesOrder.query.filter_by(customerID = customerID, receivedDate = receivedDate).update(
-            {'completedDate': datetime.today().date()}
-        )
+        order = SalesOrder.query.get_or_404(salesOrderID)
+        order.completedDate = datetime.today().date()
+        db.session.commit()
+    except Exception as e:
+        return str(e)
+    return redirect('/sales')
+
+@app.route('/sales/pay_an_order', methods = ['POST'])
+def pay_an_order():
+    salesOrderID = request.form['salesOrderID']
+    
+    try:
+        order = SalesOrder.query.get_or_404(salesOrderID)
+        order.paymentDate = datetime.today().date()
         db.session.commit()
     except Exception as e:
         return str(e)
@@ -1188,6 +1231,10 @@ def stock():
     )
     total_value = sum(row.totalPrice for row in results)
     return render_template('stock.html', results = results, total_value = total_value)
+
+@app.route('/database')
+def database():
+    return render_template('database.html')
 
 #Run the web and create the database with the app's context
 if __name__ == '__main__':

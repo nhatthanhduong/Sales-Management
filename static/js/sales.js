@@ -1,5 +1,26 @@
 const salescards = document.querySelectorAll('.sales__card')
 
+function formatNumberWithCommas(number) {
+    // Ensure number is parsed as an integer or float
+    return Number(number).toLocaleString(); 
+}
+
+function formatAllNumbers() {
+    const elements = document.querySelectorAll('td');
+    
+    elements.forEach(element => {
+        if (element.textContent.trim() !== '') {
+            const hasButton = element.querySelector('button');
+            
+            if (hasButton) {
+                return;
+            }
+            element.textContent = element.textContent.replace(/\d+/g, (match) => formatNumberWithCommas(match));
+        }
+    });
+}
+window.onload = formatAllNumbers;
+
 salescards.forEach(card => {
     card.addEventListener('click', function(event){
         event.stopPropagation();
@@ -115,18 +136,24 @@ function filterOrders() {
     let viewAllOrdersButton = document.querySelector(".button__container");
 
     if (searchInput === "") {
-        cards.forEach(card => card.style.display = "flex");
+        cards.forEach(card => {
+            card.style.display = "";
+        });
         viewAllOrdersButton.style.display = "flex";
 
     } else {
-        document.querySelector(".button__container").style.display = "none";
+        viewAllOrdersButton.style.display = "none";
 
         cards.forEach(card => {
             let customerNameElement = card.querySelector("h4");
 
             if (customerNameElement) {
                 let customerName = customerNameElement.innerText.toLowerCase();
-                card.style.display = customerName.includes(searchInput) ? "flex" : "none";
+                if (customerName.includes(searchInput)) {
+                    card.style.display = "";
+                } else {
+                    card.style.display = "none";
+                }
             } else {
                 card.style.display = "none";
             }

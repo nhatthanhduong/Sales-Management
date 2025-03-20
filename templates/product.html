@@ -47,12 +47,12 @@
                 <!-- Get user's input for new supplier and send it to the main route for python program -->
                 <form action="/product" method="POST">
                     <tr>
-                        <td><input type="text" name="productName" autocomplete="off"></td>
+                        <td><input type="text" name="productName" autocomplete="off" required></td>
                         <td><input type="text" name="productCategory" autocomplete="off"></td>
                         <td><input type="text" name = "productDescription" autocomplete="off"></td>
                         <td><input type="text" name="unit" autocomplete="off"></td>
-                        <td><input type="number" name="purchasingPrice" autocomplete="off"></td>
-                        <td><input type="number" name="sellingPrice" autocomplete="off"></td>
+                        <td><input type="number" name="purchasingPrice" autocomplete="off" required></td>
+                        <td><input type="number" name="sellingPrice" autocomplete="off" required></td>
                         <td><input type="text" name="supplierID" autocomplete="off"></td>
                         <td><input type="text" name="supplierName" autocomplete="off" list="suppliers"></td>
                         <td><input type="submit" value="Add Product"></td>

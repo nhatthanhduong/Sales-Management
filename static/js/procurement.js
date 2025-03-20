@@ -1,5 +1,26 @@
 const salesCards = document.querySelectorAll('.sales__card')
 
+function formatNumberWithCommas(number) {
+    // Ensure number is parsed as an integer or float
+    return Number(number).toLocaleString(); 
+}
+
+function formatAllNumbers() {
+    const elements = document.querySelectorAll('td');
+    
+    elements.forEach(element => {
+        if (element.textContent.trim() !== '') {
+            const hasButton = element.querySelector('button');
+            
+            if (hasButton) {
+                return;
+            }
+            element.textContent = element.textContent.replace(/\d+/g, (match) => formatNumberWithCommas(match));
+        }
+    });
+}
+window.onload = formatAllNumbers;
+
 salesCards.forEach(card => {
     card.addEventListener('click', function(event){
         event.stopPropagation();

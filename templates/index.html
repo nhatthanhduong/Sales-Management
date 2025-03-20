@@ -10,10 +10,17 @@
 {% block body %}
 <main>
     <div class="home">
-        <a href="/sales_record" class="home__card">
+        <a href="/sales" class="home__card">
             <div class="home__card--container">
-                <img src="{{ url_for('static', filename='sales_record.png') }}" alt="">
-                Sales Record
+                <img src="{{ url_for('static', filename='sales_order.png') }}" alt="">
+                Sales
+            </div>
+        </a>
+
+        <a href="/procurement" class="home__card">
+            <div class="home__card--container">
+                <img src="{{ url_for('static', filename='purchase_order.png') }}" alt="">
+                Procurement
             </div>
         </a>
 
@@ -22,6 +29,13 @@
                 <img src="{{ url_for('static', filename='management.png') }}" alt="">
                 Management
             </div>   
+        </a>
+        
+        <a href="/database" class="home__card">
+            <div class="home__card--container">
+                <img src="{{ url_for('static', filename='database.png') }}" alt="">
+                Database
+            </div>
         </a>
     </div>
 </main>
