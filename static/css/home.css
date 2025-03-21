@@ -1,7 +1,7 @@
 /* Home CSS */
 .home {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(275px, 1fr)); /* Dynamic columns */
+    grid-template-columns: repeat(auto-fit, minmax(275px, 1fr));
     justify-items: center;
     align-items: center;
     row-gap: 25px;
@@ -29,8 +29,8 @@
 }
 
 .home__card--container img {
-    width: 250px;  /* Adjust size as needed */
-    height: 250px; /* Adjust size as needed */
+    width: 250px;
+    height: 250px;
     margin: 15px;
     filter: invert(95%) sepia(5%) saturate(500%) hue-rotate(70deg);
 }

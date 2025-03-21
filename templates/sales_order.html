@@ -1,12 +1,8 @@
-<!-- Use Flask syntax to inherits the format of base.html -->
 {% extends 'base.html' %}
 
-<!-- Head block inheriting from base.html's head -->
 {% block head %}
-
 {% endblock %}
 
-<!-- Body block inheriting from base.html's body -->
 {% block body %}
 <div>
     <h1>Sales Order Management</h1>
@@ -22,7 +18,6 @@
                     <th>Customer Name</th>
                     <th>Actions</th>
                 </tr>
-                <!-- Use for loop to display all supplier in the database row by row -->
                 {% for sales_order in sales_orders %}
                     <tr>
                         <td>{{ sales_order.receivedDate }}</td>
@@ -32,16 +27,13 @@
                         <td>{{ sales_order.customerID }}</td>
                         <td>{{ sales_order.customerName }}</td>
                         <td>
-                            <!-- Pass supplier's id to the URL, which the python function uses to determine the supplier to delete -->
                             <a id="action", href="/sales_order/delete/{{ sales_order.salesOrderID }}">Delete</a>
-                            <!-- Pass supplier's id to the URL, which the python function uses to determine the supplier to update -->
                             <a id="action", href="/sales_order/update/{{ sales_order.salesOrderID }}">Update</a>
                             <a id="action", href="/sales_order/add_products/{{ sales_order.salesOrderID}}">Add Products</a>
                         </td>
                     </tr>
                 {% endfor %}
                 
-                <!-- Get user's input for new supplier and send it to the main route for python program -->
                 <form action="/sales_order" method="POST">
                     <tr>
                         <td><input type="date" name="receivedDate" value="{{ today }}"></td>

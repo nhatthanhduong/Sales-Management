@@ -1,7 +1,6 @@
 const salescards = document.querySelectorAll('.sales__card')
 
 function formatNumberWithCommas(number) {
-    // Ensure number is parsed as an integer or float
     return Number(number).toLocaleString(); 
 }
 
@@ -19,7 +18,19 @@ function formatAllNumbers() {
         }
     });
 }
-window.onload = formatAllNumbers;
+window.onload = function() {
+    formatAllNumbers();
+    
+    const totalDebtElement = document.getElementById('total__debt');
+    const rawTotalDebtElement = document.getElementById('raw_total_debt');
+
+    if (totalDebtElement && rawTotalDebtElement) {
+        const totalDebt = parseFloat(rawTotalDebtElement.textContent.replace(/,/g, ''));
+        if (!isNaN(totalDebt)) {
+            totalDebtElement.textContent = "Total Debt: " + formatNumberWithCommas(totalDebt);
+        }
+    }
+};
 
 salescards.forEach(card => {
     card.addEventListener('click', function(event){
@@ -36,7 +47,7 @@ salescards.forEach(card => {
 
 document.querySelectorAll('.sales__card--content').forEach(content => {
     content.addEventListener('click', function (event) {
-        event.stopPropagation(); // Prevent clicks inside from closing the card
+        event.stopPropagation();
     });
 });
 
@@ -97,21 +108,18 @@ document.querySelectorAll(".sales__row--add").forEach(button => {
     button.addEventListener("click", function() {
         let table = this.closest("table");
         let tbody = table.querySelector(".sales__row");
-        
-        // Determine number of columns based on existing rows or table structure
+      
         let columnCount = table.querySelector("thead tr").children.length;
 
         let newRow = document.createElement("tr");
 
         if (columnCount === 3) {
-            // Case for new orders (3 columns)
             newRow.innerHTML = `
                 <td><input type="text" name="productName[]" list="products" autocomplete="off"></td>
                 <td><input type="number" name="quantity[]" autocomplete="off"></td>
                 <td><button type="button" class="sales__row--remove">Remove</button></td>
             `;
         } else if (columnCount === 4) {
-            // Case for finalizing and delivering orders (4 columns)
             newRow.innerHTML = `
                 <td><input type="text" name="productName[]" list="products" autocomplete="off"></td>
                 <td><input type="number" name="quantity[]" autocomplete="off"></td>
@@ -120,10 +128,8 @@ document.querySelectorAll(".sales__row--add").forEach(button => {
             `;
         }
 
-        // Append the new row
         tbody.appendChild(newRow);
 
-        // Attach event to remove the row
         newRow.querySelector(".sales__row--remove").addEventListener("click", function() {
             tbody.removeChild(newRow);
         });

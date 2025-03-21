@@ -1,7 +1,6 @@
 const salesCards = document.querySelectorAll('.sales__card')
 
 function formatNumberWithCommas(number) {
-    // Ensure number is parsed as an integer or float
     return Number(number).toLocaleString(); 
 }
 
@@ -36,8 +35,15 @@ salesCards.forEach(card => {
 
 document.querySelectorAll('.sales__card--content').forEach(content => {
     content.addEventListener('click', function (event) {
-        event.stopPropagation(); // Prevent clicks inside from closing the card
+        event.stopPropagation();
     });
+});
+
+document.addEventListener('click', function(event) {
+    const expandedCard = document.querySelector('.sales__card.expanded');
+    if (expandedCard && !expandedCard.contains(event.target)) {
+        expandedCard.classList.remove('expanded');
+    }
 });
 
 document.querySelectorAll(".procurement__row--add").forEach(button => {
@@ -46,7 +52,6 @@ document.querySelectorAll(".procurement__row--add").forEach(button => {
 
         let newRow = document.createElement("tr");
 
-        // Create and append input fields for product data
         newRow.innerHTML = `
             <td><input type="text" name="productName[]" list="products" autocomplete="off"></td>
             <td><input type="text" name="productCategory[]" autocomplete="off"></td>
@@ -57,10 +62,8 @@ document.querySelectorAll(".procurement__row--add").forEach(button => {
             <td><button type="button" class="procurement__row--remove">Remove</button></td>
         `;
 
-        // Append the new row to the table
         table.appendChild(newRow);
 
-        // Attach event to remove the row
         newRow.querySelector(".procurement__row--remove").addEventListener("click", function() {
             table.removeChild(newRow);
         });

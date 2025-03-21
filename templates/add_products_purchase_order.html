@@ -1,12 +1,8 @@
-<!-- Use Flask syntax to inherits the format of base.html -->
 {% extends 'base.html' %}
 
-<!-- Head block inheriting from base.html's head -->
 {% block head %}
-
 {% endblock %}
 
-<!-- Body block inheriting from base.html's body -->
 {% block body %}
 <div>
     <h1>Purchase Order - Product Management</h1>
@@ -20,7 +16,6 @@
                     <th>Price</th>
                     <th>Actions</th>
                 </tr>
-                <!-- Use for loop to display all customer in the database row by row -->
                 {% for row in results %}
                     <tr>
                         <td>{{ row.productID }}</td>
@@ -28,13 +23,11 @@
                         <td>{{ row.quantity }}</td>
                         <td>{{ row.purchasingPrice }}</td>
                         <td>
-                            <!-- Pass customer's id to the URL, which the python function uses to determine the customer to delete -->
                             <a id="action", href="/purchase_order/add_products/delete/{{ row.purchaseOrderID }}/{{ row.productID }}">Delete</a>
                         </td>
                     </tr>
                 {% endfor %}
                 
-                <!-- Get user's input for new customer and send it to the main route for python program -->
                 <form action="/purchase_order/add_products/{{ purchase_order.purchaseOrderID }}" method="POST">
                     <tr>
                         <td></td>

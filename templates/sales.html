@@ -1,12 +1,9 @@
-<!-- Use Flask syntax to inherits the format of base.html -->
 {% extends 'base.html' %}
 
-<!-- Head block inheriting from base.html's head -->
 {% block head %}
 <link rel="stylesheet" href="{{ url_for('static', filename = 'css/sales.css') }}">
 {% endblock %}
 
-<!-- Body block inheriting from base.html's body -->
 {% block body %}
 <div class="sales">
     <div class="sales__container">
@@ -17,7 +14,7 @@
                 <span class="sales__card--plus">+</span>
                 <div class="sales__card--content">
                     <form action="/sales/new_sales_order" method="POST">
-                        <label for="name">Name:</label>
+                        <label for="customerName">Name:</label>
                         <input type="text" id="customerName" name="customerName" list="customerNames" autocomplete="off" required>
                         <datalist id="customerNames">
                             {% for customer in customers %}
@@ -25,10 +22,10 @@
                             {% endfor %}
                         </datalist>
     
-                        <label for="phone">Phone:</label>
+                        <label for="customerPhone">Phone:</label>
                         <input type="text" id="customerPhone" name="customerPhone" autocomplete="off" required>
     
-                        <label for="address">Address:</label>
+                        <label for="customerAddress">Address:</label>
                         <input type="text" id="customerAddress" name="customerAddress" autocomplete="off">
 
                         <table>
@@ -110,7 +107,7 @@
                                 </table>
                             </div>
                         {% endfor %}
-                        <div class="sales__card--delivered">
+                        <div class="sales__card--paid">
                             <input type="submit" value="Place An Order">
                         </div>
                         
@@ -232,10 +229,13 @@
                                     </table><br>
                                 </form>
                                 
-                                <form class="sales__card--delivered" action="/sales/deliver_an_order" method="POST">
-                                    <input type="text" name="salesOrderID" value="{{ salesOrderID }}" hidden>
-                                    <input type="submit" value="Delivered">
-                                </form>
+                                <div class="sales__card--delivered">
+                                    <form action="/sales/deliver_an_order" method="POST">
+                                        <input type="text" name="salesOrderID" value="{{ salesOrderID }}" hidden>
+                                        <input type="submit" value="Delivered">
+                                    </form>
+                                </div>
+                                
                             </div>
                         {% endfor %}
                     </div>
@@ -274,12 +274,21 @@
                                     </tbody>
                                 </table><br>
 
-                                <form class="sales__card--delivered" action="/sales/pay_an_order" method="POST">
+                                <form class="sales__card--paid" action="/sales/pay_an_order" method="POST">
                                     <input type="text" name="salesOrderID" value="{{ salesOrderID }}" hidden>
                                     <input type="submit" value="Paid">
                                 </form>
+                                
                             </div>
                         {% endfor %}
+                        <div class="sales__card--delivered">
+                            <form action="/sales/pay_all_order" method="POST">
+                                <input type="text" name="customerName" value="{{ customerName }}" hidden>
+                                <p id="total__debt">Total Debt: {{ total_debt }}</p>
+                                <span id="raw_total_debt" hidden>{{ total_debt }}</span>
+                                <input type="submit" value="All Paid">
+                            </form>
+                        </div>
                     </div>
                 </div>
             {% endfor %}

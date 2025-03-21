@@ -1,12 +1,9 @@
-<!-- Use Flask syntax to inherits the format of base.html -->
 {% extends 'base.html' %}
 
-<!-- Head block inheriting from base.html's head -->
 {% block head %}
 <link rel="stylesheet" href="{{ url_for('static', filename = 'css/new_customer.css') }}">
 {% endblock %}
 
-<!-- Body block inheriting from base.html's body -->
 {% block body %}
 <main>
     <div>

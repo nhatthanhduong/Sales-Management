@@ -13,9 +13,9 @@ body {
     background-color: #2f3e2a;
     height: 50px;
     font-family: Arial, Helvetica, sans-serif;
-    display: flex; /* Enable flexbox */
-    justify-content: space-between; /* Center horizontally */
-    align-items: center; /* Center vertically */
+    display: flex;
+    justify-content: space-between; 
+    align-items: center; 
     padding: 0 50px;
 }
 
@@ -25,7 +25,6 @@ body {
     justify-content: center;
 }
 
-/* Links inside the navbar__container */
 .navbar__container a {
     font-size: 1rem;
     color: #eef2ea;
@@ -33,12 +32,10 @@ body {
     text-decoration: none;
 }
 
-/* The navbar__dropdown container */
 .navbar__dropdown {
     overflow: hidden;
 }
 
-/* navbar__dropdown button */
 .navbar__dropdown--button {
     display: block;
     font-size: 1rem;
@@ -47,12 +44,10 @@ body {
     padding: 14px 16px;
 }
 
-/* Add a red background color to navbar__container links on hover */
 .navbar__container a:hover, .navbar__dropdown:hover .navbar__dropdown--button {
     background-color: #4a5d3a;
 }
 
-/* navbar__dropdown content (hidden by default) */
 .navbar__dropdown--content {
     display: none;
     position: absolute;
@@ -61,7 +56,6 @@ body {
     z-index: 1;
 }
 
-/* Links inside the navbar__dropdown */
 .navbar__dropdown--content a {
     color: #eef2ea;
     padding: 12px 16px;
@@ -70,12 +64,10 @@ body {
     text-align: left;
 }
 
-/* Add a grey background color to navbar__dropdown links on hover */
 .navbar__dropdown--content a:hover {
     background-color: #5a6e4f;
 }
 
-/* Show the navbar__dropdown menu on hover */
 .navbar__dropdown:hover .navbar__dropdown--content {
     display: block;
 }
@@ -174,7 +166,6 @@ input:focus {
     background-color: #eef2ea;
 }
 
-/* Table Styling */
 table {
     width: 100%;
     border-collapse: collapse;
@@ -221,8 +212,8 @@ a[id="action"] {
     font-size: 14px;
     border-radius: 6px;
     cursor: pointer;
-    text-decoration: none; /* Remove underline from links */
-    display: inline-block; /* Make links behave like buttons */
+    text-decoration: none; 
+    display: inline-block;
     transition: background 0.3s ease-in-out, transform 0.2s ease-in-out;
 }
 

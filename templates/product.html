@@ -1,12 +1,8 @@
-<!-- Use Flask syntax to inherits the format of base.html -->
 {% extends 'base.html' %}
 
-<!-- Head block inheriting from base.html's head -->
 {% block head %}
-
 {% endblock %}
 
-<!-- Body block inheriting from base.html's body -->
 {% block body %}
 <div>
     <h1>Product Management</h1>
@@ -24,7 +20,6 @@
                     <th>Supplier Name</th>
                     <th>Actions</th>
                 </tr>
-                <!-- Use for loop to display all supplier in the database row by row -->
                 {% for product in products %}
                     <tr>
                         <td>{{ product.productName }}</td>
@@ -36,15 +31,12 @@
                         <td>{{ product.supplierID }}</td>
                         <td>{{ product.supplierName }}</td>
                         <td>
-                            <!-- Pass supplier's id to the URL, which the python function uses to determine the supplier to delete -->
                             <a id="action", href="/product/delete/{{ product.productID }}">Delete</a>
-                            <!-- Pass supplier's id to the URL, which the python function uses to determine the supplier to update -->
                             <a id="action", href="/product/update/{{ product.productID }}">Update</a>
                         </td>
                     </tr>
                 {% endfor %}
                 
-                <!-- Get user's input for new supplier and send it to the main route for python program -->
                 <form action="/product" method="POST">
                     <tr>
                         <td><input type="text" name="productName" autocomplete="off" required></td>

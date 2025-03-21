@@ -1,18 +1,11 @@
-# from sqlalchemy import create_engine
 from sqlalchemy import text, CheckConstraint
 from flask import Flask, request, render_template, redirect, jsonify
 from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
 import traceback
 
-# Create connection and engine with mysql database
-# con_sqlalchemy = 'mysql+pymysql://thanhphaolo:duongnhatthanh@database-3.c18iwmgyqpdp.ap-southeast-2.rds.amazonaws.com:3306/product_sales'
-# engine = create_engine(con_sqlalchemy)
-
-# Create Flask instance
 app = Flask(__name__)
 
-# Connect with sqlite database
 app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///product_sales.db"
 db = SQLAlchemy(app)
 
@@ -270,6 +263,7 @@ def sales():
         )
     )
 
+    total_debt = 0
     unpaid_dict = {}
     for order in unpaidOrders:
         salesOrderID, customerName, completedDate, productID, productName, quantity, price = order
@@ -286,6 +280,7 @@ def sales():
             "quantity": quantity,
             "price": price
         })
+        total_debt += price*quantity
     
     products = Product.query.order_by(db.func.cast(db.func.substring(Product.productID, 2), db.Integer)).all()
 
@@ -295,6 +290,7 @@ def sales():
                            finalizingOrders = finalizing_dict.items(),
                            deliveringOrders = delivering_dict.items(),
                            unpaidOrders = unpaid_dict.items(),
+                           total_debt = total_debt,
                            products = products)
 
 @app.route('/sales/place_an_order', methods = ['POST'])
@@ -409,7 +405,6 @@ def sales_add_customer():
     productNames = request.form.getlist('productName[]')
     quantities = request.form.getlist('quantity[]')
 
-    # Create new customer in the database
     new_customer = Customer(
         customerID=Customer.create_id(),
         customerName=customerName,
@@ -593,6 +588,24 @@ def pay_an_order():
         return str(e)
     return redirect('/sales')
 
+@app.route('/sales/pay_all_order', methods = ['POST'])
+def pay_all_order():
+    customerName = request.form['customerName']
+    
+    try:
+        customerID = Customer.query.filter_by(customerName = customerName).first().customerID
+        SalesOrder.query.filter(
+            (SalesOrder.customerID == customerID) & 
+            (SalesOrder.completedDate !=None) & 
+            (SalesOrder.paymentDate == None)
+            ).update(
+                {'paymentDate': datetime.today().date()}
+            )
+        db.session.commit()
+    except Exception as e:
+        return str(e)
+    return redirect('/sales')
+
 @app.route('/procurement', methods=['GET'])
 def procurement():
     supplier_details = db.session.execute(
@@ -683,7 +696,6 @@ def procurement_add_product():
 @app.route('/suggest_customer', methods=['GET'])
 def get_customer():
     name = request.args.get('name')
-    # Query the database for the existing customer
     customer = Customer.query.filter_by(customerName=name).first()
     
     if customer:
@@ -693,7 +705,6 @@ def get_customer():
 
 @app.route('/customer', methods = ['GET', 'POST'])
 def customer():
-    # if the user enters customer's info, create a new customer and insert it into the database and return to homepage
     if request.method == 'POST':
         customerID = Customer.create_id()
         customerName = empty_string(request.form['customerName'])
@@ -715,7 +726,6 @@ def customer():
         else: 
             return redirect('/customer')
     
-    # If no customer to be inserted left, display all customers in the database
     else:
         customers = Customer.query.order_by(
             db.func.cast(db.func.substring(Customer.customerID, 2), db.Integer)).all()
@@ -723,7 +733,6 @@ def customer():
 
 @app.route('/customer/delete/<id>')
 def delete_customer(id):
-    #Get customer by their id in the URL, delete it and return to homepage
     customer_to_delete = Customer.query.get_or_404(id)
 
     try:
@@ -735,10 +744,8 @@ def delete_customer(id):
     
 @app.route('/customer/update/<id>', methods = ['GET', 'POST'])
 def update_customer(id):
-    #Get customer by their id in the URL
     customer_to_update = Customer.query.get_or_404(id)
     
-    #Assign the customer's info according to the user's input, insert into the database and return to homepage
     if request.method == 'POST':
         customer_to_update.customerName = empty_string(request.form['customerName'])
         customer_to_update.customerPhone = empty_string(request.form['customerPhone'])
@@ -749,14 +756,12 @@ def update_customer(id):
             return redirect('/customer')
         except:
             return 'There was a problem updating this customer'
-
-    #Turn to the updating page of the customer when the customer press the Update button    
+  
     else:
         return render_template('update_customer.html', customer = customer_to_update)
 
 @app.route('/supplier', methods = ['GET', 'POST'])
 def supplier():
-    # if the user enters supplier's info, create a new supplier and insert it into the database and return to homepage
     if request.method == 'POST':
         supplierID = Supplier.create_id()
         supplierName = empty_string(request.form['supplierName'])
@@ -777,7 +782,6 @@ def supplier():
         else:
             return redirect('/supplier')
     
-    # If no supplier to be inserted left, display all suppliers in the database
     else:
         suppliers = Supplier.query.order_by(
             db.func.cast(db.func.substring(Supplier.supplierID, 2), db.Integer)).all()
@@ -785,7 +789,6 @@ def supplier():
 
 @app.route('/supplier/delete/<id>')
 def delete_supplier(id):
-    #Get supplier by their id in the URL, delete it and return to homepage
     supplier_to_delete = Supplier.query.get_or_404(id)
 
     try:
@@ -797,10 +800,8 @@ def delete_supplier(id):
     
 @app.route('/supplier/update/<id>', methods = ['GET', 'POST'])
 def update_supplier(id):
-    #Get supplier by their id in the URL
     supplier_to_update = Supplier.query.get_or_404(id)
     
-    #Assign the supplier's info according to the user's input, insert into the database and return to homepage
     if request.method == 'POST':
         supplier_to_update.supplierName = empty_string(request.form['supplierName'])
         supplier_to_update.supplierPhone = empty_string(request.form['supplierPhone'])
@@ -812,7 +813,6 @@ def update_supplier(id):
         except:
             return 'There was a problem updating this supplier'
 
-    #Turn to the updating page of the supplier when the supplier press the Update button    
     else:
         return render_template('update_supplier.html', supplier = supplier_to_update)
 
@@ -1178,7 +1178,6 @@ def delete_sales_order_details(salesOrderID, productID):
 def database():
     return render_template('database.html')
 
-#Run the web and create the database with the app's context
 if __name__ == '__main__':
     app.app_context().push()
     db.create_all()

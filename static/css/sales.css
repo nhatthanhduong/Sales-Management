@@ -44,14 +44,14 @@
     position: fixed;
     top: 50%;
     left: 50%;
-    width: 90vw; /* Almost full width */
+    width: 90vw;
     height: 90vh;
     overflow: auto;
     transform: translate(-50%, -50%);
-    z-index: 10; /* Ensures it appears on top */
-    padding: 20px; /* Optional: Adds spacing */
+    z-index: 10;
+    padding: 20px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-    border-radius: 10px; /* Optional: Rounded corners */
+    border-radius: 10px;
     display: block;
 }
 
@@ -63,7 +63,7 @@
     padding: 10px 15px;
     margin: 15px 0;
     background: rgba(255, 255, 255, 0.1);
-    border: 5px solid #3d5a40; /* Accent border for emphasis */
+    border: 5px solid #3d5a40;
     border-radius: 10px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
@@ -93,8 +93,45 @@
 
 .sales__card--delivered {
     display: flex;
-    justify-content: center;
+    justify-content: flex-end;
     align-items: center;
+    width: 100%;
+}
+
+.sales__card--delivered input[type="submit"] {
+    padding: 10px 30px; 
+    font-size: 16px;
+    background: #6aac89;
+    color: #eef2ea;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s ease-in-out, transform 0.2s ease-in-out;
+}
+
+.sales__card--paid {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.sales__card--paid input[type="submit"] {
+    padding: 10px 15px;
+    font-size: 16px;
+    background: #6aac89;
+    color: #eef2ea;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s ease-in-out, transform 0.2s ease-in-out;
+}
+
+#total__debt {
+    font-size: 18px;
+    font-weight: 625;
+    color: #e74c3c;
+    font-style: italic;
+    margin-right: 20px;
 }
 
 .button__container {
