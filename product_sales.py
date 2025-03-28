@@ -1,12 +1,11 @@
 from sqlalchemy import text, CheckConstraint
 from flask import Flask, request, render_template, redirect, jsonify
+from flask_babel import Babel, _
 from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
-import traceback
 
 app = Flask(__name__)
-
-app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///product_sales.db"
+app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:////app/instance/product_sales.db"
 db = SQLAlchemy(app)
 
 purchase_order_details = db.Table('purchaseorderdetails',
@@ -489,8 +488,8 @@ def sales_update_finalizing_order():
                             productID = productID,
                             quantity = quantity))
                     db.session.commit()         
-                except Exception as e:
-                    return str(e)
+                except:
+                    return 'There was a problem adding this detail'
             else:
                 return f"Product '{productName}' not found in database."
 
@@ -503,8 +502,8 @@ def sales_update_finalizing_order():
             )
             db.session.execute(stmt)
             db.session.commit()
-        except Exception as e:
-            return str(e)
+        except:
+            return 'There was a problem deleting this detail'
     
     return redirect('/sales')
 
@@ -545,8 +544,8 @@ def sales_update_delivering_order():
                             productID = productID,
                             quantity = quantity))
                     db.session.commit()         
-                except Exception as e:
-                    return str(e)
+                except:
+                    return f'There was a problem add {productName} to the order'
             else:
                 return f"Product '{productName}' not found in database."
 
@@ -559,8 +558,8 @@ def sales_update_delivering_order():
             )
             db.session.execute(stmt)
             db.session.commit()
-        except Exception as e:
-            return str(e)
+        except:
+            return 'There was a problem deleting this detail'
     
     return redirect('/sales')
 
@@ -572,8 +571,8 @@ def deliver_an_order():
         order = SalesOrder.query.get_or_404(salesOrderID)
         order.completedDate = datetime.today().date()
         db.session.commit()
-    except Exception as e:
-        return str(e)
+    except:
+        return 'There was a problem updating this order'
     return redirect('/sales')
 
 @app.route('/sales/pay_an_order', methods = ['POST'])
@@ -584,8 +583,8 @@ def pay_an_order():
         order = SalesOrder.query.get_or_404(salesOrderID)
         order.paymentDate = datetime.today().date()
         db.session.commit()
-    except Exception as e:
-        return str(e)
+    except:
+        return 'There was a problem updating this order'
     return redirect('/sales')
 
 @app.route('/sales/pay_all_order', methods = ['POST'])
@@ -602,8 +601,8 @@ def pay_all_order():
                 {'paymentDate': datetime.today().date()}
             )
         db.session.commit()
-    except Exception as e:
-        return str(e)
+    except:
+        return 'There was a problem updating orders'
     return redirect('/sales')
 
 @app.route('/procurement', methods=['GET'])
@@ -1168,10 +1167,7 @@ def delete_sales_order_details(salesOrderID, productID):
                  {'salesOrderID': salesOrderID, 'productID': productID})
         db.session.commit()
         return redirect(f'/sales_order/add_products/{salesOrderID}')
-    
-
-    except Exception as e:
-        print(f"Error: {e}")
+    except:
         return 'There was a problem deleting this product'
 
 @app.route('/database')
