@@ -7,7 +7,7 @@ from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///product_sales.db"
+app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:////app/instance/product_sales.db"
 db = SQLAlchemy(app)
 
 app.config["SESSION_PERMANENT"] = True

@@ -24,12 +24,18 @@ This will set up and run the app inside the Docker container
     - Sales: Manage customer orders, stock tracking, ordering list, deliveries and payments.
     - Procurement: Manage suppliers and their products
     - Database: Store and display information about customers, suppliers, products, purchase orders and sales orders
+    - Language: Switch between English and Vietnamese
 
 ![image](https://github.com/nhatthanhduong/Sales-Management/blob/master/user_guide/home.png)
 
 2. Procurement:
-    - Click the "+" button to add a new supplier
-    - Click on a supplier’s card to view their products or add a new product
+    1. Suppliers - Products section to manage suppliers and their products
+        - Click the "+" button to add a new supplier
+        - Select a supplier’s card to view their products or add a new product  
+    2. Purchase Orders section to manage unpaid purchase orders to suppliers
+        - Select a supplier’s card to view unpaid purchase orders  
+        - Click the "Paid" button to mark an individual order as paid  
+        - Click the "All Paid" button to clear all unpaid orders for that supplier  
 
 ![image](https://github.com/nhatthanhduong/Sales-Management/blob/master/user_guide/procurement.png)
 ![image](https://github.com/nhatthanhduong/Sales-Management/blob/master/user_guide/procurement_add.png)
