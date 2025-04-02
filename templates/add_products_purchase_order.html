@@ -5,16 +5,16 @@
 
 {% block body %}
 <div>
-    <h1>Purchase Order - Product Management</h1>
+    <h1>{{ _('Purchase Order - Product Management') }}</h1>
     <div>
         <div>
             <table>
                 <tr>
-                    <th>Product ID</th>
-                    <th>Product Name</th>
-                    <th>Quantity</th>
-                    <th>Price</th>
-                    <th>Actions</th>
+                    <th>{{ _('Product ID') }}</th>
+                    <th>{{ _('Product Name') }}</th>
+                    <th>{{ _('Quantity') }}</th>
+                    <th>{{ _('Price') }}</th>
+                    <th>{{ _('Actions') }}</th>
                 </tr>
                 {% for row in results %}
                     <tr>
@@ -23,7 +23,7 @@
                         <td>{{ row.quantity }}</td>
                         <td>{{ row.purchasingPrice }}</td>
                         <td>
-                            <a id="action", href="/purchase_order/add_products/delete/{{ row.purchaseOrderID }}/{{ row.productID }}">Delete</a>
+                            <a id="action", href="/purchase_order/add_products/delete/{{ row.purchaseOrderID }}/{{ row.productID }}">{{ _('Delete') }}</a>
                         </td>
                     </tr>
                 {% endfor %}
@@ -45,11 +45,11 @@
             </datalist>
         </div>
         <div>
-            <h2>Product List</h2>
+            <h2>{{ _('Product List') }}</h2>
             <table>
                 <tr>
-                    <th>Product ID</th>
-                    <th>Product Name</th>
+                    <th>{{ _('Product ID') }}</th>
+                    <th>{{ _('Product Name') }}</th>
                 </tr>
                 {% for product in products %}
                     <tr>

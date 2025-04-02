@@ -5,16 +5,16 @@
 
 {% block body %}
 <div>
-    <h1>Purchase Order Management</h1>
+    <h1>{{ _('Purchase Order Management') }}</h1>
     <div>
         <div>
             <table>
                 <tr>
-                    <th>Ordering Date</th>
-                    <th>Payment Date</th>
-                    <th>Supplier ID</th>
-                    <th>Supplier Name</th>
-                    <th>Actions</th>
+                    <th>{{ _('Ordering Date') }}</th>
+                    <th>{{ _('Payment Date') }}</th>
+                    <th>{{ _('Supplier ID') }}</th>
+                    <th>{{ _('Supplier Name') }}</th>
+                    <th>{{ _('Actions') }}</th>
                 </tr>
                 {% for purchase_order in purchase_orders %}
                     <tr>
@@ -23,9 +23,9 @@
                         <td>{{ purchase_order.supplierID }}</td>
                         <td>{{ purchase_order.supplierName }}</td>
                         <td>
-                            <a id="action", href="/purchase_order/delete/{{ purchase_order.purchaseOrderID }}">Delete</a>
-                            <a id="action", href="/purchase_order/update/{{ purchase_order.purchaseOrderID }}">Update</a>
-                            <a id="action", href="/purchase_order/add_products/{{ purchase_order.purchaseOrderID}}">Add Products</a>
+                            <a id="action", href="/purchase_order/delete/{{ purchase_order.purchaseOrderID }}">{{ _('Delete') }}</a>
+                            <a id="action", href="/purchase_order/update/{{ purchase_order.purchaseOrderID }}">{{ _('Update') }}</a>
+                            <a id="action", href="/purchase_order/add_products/{{ purchase_order.purchaseOrderID}}">{{ _('Add Products') }}</a>
                         </td>
                     </tr>
                 {% endfor %}
@@ -36,7 +36,7 @@
                         <td><input type="date" name ="paymentDate"></td>
                         <td><input type="text" name="supplierID" autocomplete="off"></td>
                         <td><input type="text" name="supplierName" autocomplete="off" list="suppliers"></td>
-                        <td><input type="submit" value="Add Purchase Order"></td>
+                        <td><input type="submit" value="{{ _('Add Purchase Order') }}"></td>
                     </tr>
                 </form>
                 <datalist id="suppliers">
@@ -48,12 +48,12 @@
         </div>
 
         <div>
-            <h2>Supplier List</h2>
+            <h2>{{ _('Supplier List') }}</h2>
             <table>
                 <tr>
-                    <th>Supplier ID</th>
-                    <th>Supplier Name</th>
-                    <th>Supplier Address</th>
+                    <th>{{ _('Supplier ID') }}</th>
+                    <th>{{ _('Supplier Name') }}</th>
+                    <th>{{ _('Supplier Address') }}</th>
                 </tr>
                 {% for supplier in suppliers %}
                     <tr>

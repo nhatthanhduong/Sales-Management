@@ -5,15 +5,15 @@
 
 {% block body %}
 <div>
-    <h1>Supplier Management</h1>
+    <h1>{{ _('Supplier Management') }}</h1>
     
     <table>
         <tr>
-            <th>Supplier ID</th>
-            <th>Supplier Name</th>
-            <th>Phone Number</th>
-            <th>Address</th>
-            <th>Actions</th>
+            <th>{{ _('Supplier ID') }}</th>
+            <th>{{ _('Supplier Name') }}</th>
+            <th>{{ _('Phone Number') }}</th>
+            <th>{{ _('Address') }}</th>
+            <th>{{ _('Actions') }}</th>
         </tr>
         {% for supplier in suppliers %}
             <tr>
@@ -22,8 +22,8 @@
                 <td>{{ supplier.supplierPhone }}</td>
                 <td>{{ supplier.supplierAddress }}</td>
                 <td>
-                    <a id="action", href="/supplier/delete/{{ supplier.supplierID }}">Delete</a>
-                    <a id="action", href="/supplier/update/{{ supplier.supplierID }}">Update</a>
+                    <a id="action", href="/supplier/delete/{{ supplier.supplierID }}">{{ _('Delete') }}</a>
+                    <a id="action", href="/supplier/update/{{ supplier.supplierID }}">{{ _('Update') }}</a>
                 </td>
             </tr>
         {% endfor %}

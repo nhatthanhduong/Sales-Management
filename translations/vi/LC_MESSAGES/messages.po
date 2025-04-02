@@ -1,0 +1,371 @@
+# Vietnamese translations for PROJECT.
+# Copyright (C) 2025 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2025-04-01 15:50+1100\n"
+"PO-Revision-Date: 2025-04-01 14:45+1100\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: vi\n"
+"Language-Team: vi <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.17.0\n"
+
+#: templates/add_products_purchase_order.html:8
+msgid "Purchase Order - Product Management"
+msgstr "Đơn Nhập - Chi Tiết"
+
+#: templates/add_products_purchase_order.html:13
+#: templates/add_products_purchase_order.html:51
+#: templates/add_products_sales_order.html:14
+#: templates/add_products_sales_order.html:52
+msgid "Product ID"
+msgstr "Mã SP"
+
+#: templates/add_products_purchase_order.html:14
+#: templates/add_products_purchase_order.html:52
+#: templates/add_products_sales_order.html:15
+#: templates/add_products_sales_order.html:53 templates/sales.html:34
+msgid "Product Name"
+msgstr "Tên SP"
+
+#: templates/add_products_purchase_order.html:15
+#: templates/add_products_sales_order.html:16 templates/sales.html:35
+#: templates/sales.html:70 templates/sales.html:93 templates/sales.html:132
+#: templates/sales.html:192 templates/sales.html:260
+msgid "Quantity"
+msgstr "Số Lượng"
+
+#: templates/add_products_purchase_order.html:16
+#: templates/add_products_sales_order.html:17 templates/sales.html:133
+#: templates/sales.html:193 templates/sales.html:261
+msgid "Price"
+msgstr "Giá"
+
+#: templates/add_products_purchase_order.html:17
+#: templates/add_products_sales_order.html:18 templates/customer.html:16
+#: templates/procurement.html:44 templates/product.html:21
+#: templates/purchase_order.html:17 templates/sales.html:36
+#: templates/sales.html:134 templates/sales.html:194
+#: templates/sales_order.html:19 templates/supplier.html:16
+#: templates/update_purchase_order.html:14 templates/update_sales_order.html:16
+msgid "Actions"
+msgstr "Thao Tác"
+
+#: templates/add_products_purchase_order.html:26
+#: templates/add_products_sales_order.html:27 templates/customer.html:25
+#: templates/product.html:34 templates/purchase_order.html:26
+#: templates/sales.html:149 templates/sales.html:209
+#: templates/sales_order.html:30 templates/supplier.html:25
+msgid "Delete"
+msgstr "Xoá"
+
+#: templates/add_products_purchase_order.html:48
+#: templates/add_products_sales_order.html:49
+msgid "Product List"
+msgstr "Danh Sách SP"
+
+#: templates/add_products_sales_order.html:8
+msgid "Sales Order - Product Management"
+msgstr "Đơn Nhập - Chi Tiết"
+
+#: templates/base.html:23 templates/index.html:13
+msgid "Sales"
+msgstr "Bán Hàng"
+
+#: templates/base.html:24 templates/index.html:20
+msgid "Procurement"
+msgstr "Nhập Hàng"
+
+#: templates/base.html:30 templates/database.html:13
+msgid "Customer"
+msgstr "Khách Hàng"
+
+#: templates/base.html:31 templates/database.html:20
+msgid "Supplier"
+msgstr "Kho"
+
+#: templates/base.html:32 templates/database.html:27
+#: templates/procurement.html:38 templates/sales.html:69
+#: templates/sales.html:92 templates/sales.html:131 templates/sales.html:191
+#: templates/sales.html:259
+msgid "Product"
+msgstr "Sản Phẩm"
+
+#: templates/base.html:33 templates/database.html:34
+msgid "Purchase Order"
+msgstr "Đơn Nhập"
+
+#: templates/base.html:34 templates/database.html:41
+msgid "Sales Order"
+msgstr "Đơn Bán"
+
+#: templates/base.html:38
+#, fuzzy
+msgid "Language"
+msgstr "Ngôn Ngữ"
+
+#: templates/customer.html:8 templates/update_customer.html:8
+msgid "Customer Management"
+msgstr "Quản Lý Khách Hàng"
+
+#: templates/customer.html:12 templates/sales_order.html:17
+#: templates/sales_order.html:59 templates/update_sales_order.html:15
+msgid "Customer ID"
+msgstr "Mã KH"
+
+#: templates/customer.html:13 templates/sales_order.html:18
+#: templates/sales_order.html:60
+msgid "Customer Name"
+msgstr "Tên KH"
+
+#: templates/customer.html:14 templates/supplier.html:14
+msgid "Phone Number"
+msgstr "SĐT"
+
+#: templates/customer.html:15 templates/supplier.html:15
+#: templates/update_customer.html:14 templates/update_supplier.html:13
+msgid "Address"
+msgstr "Địa Chỉ"
+
+#: templates/customer.html:26 templates/product.html:35
+#: templates/purchase_order.html:27 templates/sales_order.html:31
+#: templates/supplier.html:26 templates/update_customer.html:21
+#: templates/update_product.html:28 templates/update_purchase_order.html:21
+#: templates/update_sales_order.html:25 templates/update_supplier.html:20
+msgid "Update"
+msgstr "Cập Nhật"
+
+#: templates/index.html:27
+msgid "Database"
+msgstr "Dữ Liệu"
+
+#: templates/new_customer.html:24
+msgid "Customer not found. Do you want to add them to the database?"
+msgstr "Khách hàng không tồn tại. Bạn có muốn thêm vào cơ sở dữ liệu?"
+
+#: templates/new_customer.html:27
+msgid "Yes"
+msgstr "Có"
+
+#: templates/new_customer.html:28
+msgid "No"
+msgstr "Không"
+
+#: templates/procurement.html:10
+msgid "Suppliers - Products"
+msgstr "Kho - Sản Phẩm"
+
+#: templates/procurement.html:16 templates/sales.html:17
+msgid "Name:"
+msgstr "Tên:"
+
+#: templates/procurement.html:19 templates/sales.html:25
+msgid "Phone:"
+msgstr "SĐT:"
+
+#: templates/procurement.html:22 templates/sales.html:28
+msgid "Address:"
+msgstr "Địa chỉ:"
+
+#: templates/procurement.html:25
+msgid "Add Supplier"
+msgstr "Thêm Kho"
+
+#: templates/procurement.html:31 templates/sales.html:124
+#: templates/sales.html:181 templates/sales.html:251
+msgid "Name: "
+msgstr "Tên: "
+
+#: templates/procurement.html:39 templates/product.html:14
+#: templates/update_product.html:12
+msgid "Category"
+msgstr "Loại"
+
+#: templates/procurement.html:40 templates/product.html:15
+#: templates/update_product.html:13
+msgid "Description"
+msgstr "Mô Tả"
+
+#: templates/procurement.html:41 templates/product.html:16
+#: templates/update_product.html:14
+msgid "Unit"
+msgstr "Đơn Vị"
+
+#: templates/procurement.html:42 templates/product.html:17
+#: templates/update_product.html:15
+msgid "Purchasing Price"
+msgstr "Giá Nhập"
+
+#: templates/procurement.html:43 templates/product.html:18
+#: templates/update_product.html:16
+msgid "Selling Price"
+msgstr "Giá Bán"
+
+#: templates/procurement.html:68 templates/purchase_order.html:28
+#: templates/sales_order.html:32
+msgid "Add Products"
+msgstr "Thêm Sản Phẩm"
+
+#: templates/product.html:8 templates/update_product.html:8
+msgid "Product Management"
+msgstr "Quản Lý Sản Phẩm"
+
+#: templates/product.html:13 templates/update_customer.html:12
+#: templates/update_product.html:11 templates/update_supplier.html:11
+msgid "Name"
+msgstr "Tên"
+
+#: templates/product.html:19 templates/product.html:65
+#: templates/purchase_order.html:15 templates/purchase_order.html:54
+#: templates/supplier.html:12 templates/update_product.html:17
+#: templates/update_purchase_order.html:13
+msgid "Supplier ID"
+msgstr "Mã Kho"
+
+#: templates/product.html:20 templates/product.html:66
+#: templates/purchase_order.html:16 templates/purchase_order.html:55
+#: templates/supplier.html:13
+msgid "Supplier Name"
+msgstr "Tên Kho"
+
+#: templates/product.html:62 templates/purchase_order.html:51
+msgid "Supplier List"
+msgstr "Danh Sách Kho"
+
+#: templates/purchase_order.html:8 templates/update_purchase_order.html:8
+msgid "Purchase Order Management"
+msgstr "Quản Lý Đơn Nhập"
+
+#: templates/purchase_order.html:13 templates/sales_order.html:14
+#: templates/update_purchase_order.html:11 templates/update_sales_order.html:12
+msgid "Ordering Date"
+msgstr "Ngày Đặt"
+
+#: templates/purchase_order.html:14 templates/sales_order.html:16
+#: templates/update_purchase_order.html:12 templates/update_sales_order.html:14
+msgid "Payment Date"
+msgstr "Ngày Thanh Toán"
+
+#: templates/purchase_order.html:39
+msgid "Add Purchase Order"
+msgstr "Thêm Đơn Nhập"
+
+#: templates/purchase_order.html:56
+msgid "Supplier Address"
+msgstr "Địa Chỉ Kho"
+
+#: templates/sales.html:10
+msgid "Search Customer..."
+msgstr "Tìm Khách Hàng..."
+
+#: templates/sales.html:11
+msgid "Managing"
+msgstr "Quản Lý"
+
+#: templates/sales.html:49
+msgid "Add Order"
+msgstr "Thêm Đơn Hàng"
+
+#: templates/sales.html:66
+msgid "Stock"
+msgstr "Tồn Kho"
+
+#: templates/sales.html:88
+msgid "Supplier Name: "
+msgstr "Tên Kho: "
+
+#: templates/sales.html:111
+msgid "Place An Order"
+msgstr "Đặt Hàng"
+
+#: templates/sales.html:120
+msgid "Finalizing"
+msgstr "Chưa Hoàn Tất"
+
+#: templates/sales.html:164 templates/sales.html:224
+msgid "Update Order"
+msgstr "Cập Nhật Đơn Hàng"
+
+#: templates/sales.html:177
+msgid "Delivering"
+msgstr "Đang Giao"
+
+#: templates/sales.html:185
+msgid "Received Date: "
+msgstr "Ngày Nhận: "
+
+#: templates/sales.html:235
+msgid "Delivered"
+msgstr "Đã Giao"
+
+#: templates/sales.html:247
+msgid "Unpaid"
+msgstr "Chưa Thanh Toán"
+
+#: templates/sales.html:255
+msgid "Delivering Date: "
+msgstr "Ngày Giao: "
+
+#: templates/sales.html:278
+msgid "Paid"
+msgstr "Đã Thanh Toán"
+
+#: templates/sales.html:286
+msgid "Total Debt: "
+msgstr "Tổng Hoá Đơn"
+
+#: templates/sales.html:288
+msgid "All Paid"
+msgstr "Thanh Toán Tất Cả"
+
+#: templates/sales.html:298
+msgid "Completed"
+msgstr "Hoàn Thành"
+
+#: templates/sales.html:300
+msgid "View All Orders"
+msgstr "Xem Tất Cả Đơn Hàng"
+
+#: templates/sales_order.html:8 templates/update_sales_order.html:8
+msgid "Sales Order Management"
+msgstr "Quản Lý Đơn Bán"
+
+#: templates/sales_order.html:13 templates/update_sales_order.html:11
+msgid "Received Date"
+msgstr "Ngày Nhận"
+
+#: templates/sales_order.html:15 templates/update_sales_order.html:13
+msgid "Completed Date"
+msgstr "Ngày Hoàn Thành"
+
+#: templates/sales_order.html:45
+msgid "Add Sales Order"
+msgstr "Thêm Đơn Bán"
+
+#: templates/sales_order.html:56
+msgid "Customer List"
+msgstr "Danh Sách KH"
+
+#: templates/sales_order.html:61
+msgid "Customer Address"
+msgstr "Địa Chỉ KH"
+
+#: templates/supplier.html:8 templates/update_supplier.html:8
+msgid "Supplier Management"
+msgstr "Quản Lý Kho"
+
+#: templates/update_customer.html:13 templates/update_supplier.html:12
+msgid "Phone"
+msgstr "SĐT"
+
+#~ msgid "Switch Language"
+#~ msgstr "Chuyển Đổi Ngôn Ngữ"
+

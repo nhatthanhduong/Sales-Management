@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ get_locale() }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -20,18 +20,27 @@
                 <span class="bar"></span>
             </div>
             <div class="navbar__menu">
-                <a href="/sales">Sales</a>
-                <a href="/procurement">Procurement</a>
+                <a href="/sales">{{ _('Sales') }}</a>
+                <a href="/procurement">{{ _('Procurement') }}</a>
                 <div class="navbar__dropdown">
                     <a href="/database" class="navbar__dropdown--button">Database
                         <i class="fa fa-caret-down"></i>
                     </a>
                     <div class="navbar__dropdown--content">
-                        <a href="/customer">Customer</a>
-                        <a href="/supplier">Supplier</a>
-                        <a href="/product">Product</a>
-                        <a href="/purchase_order">Purchase Order</a>
-                        <a href="/sales_order">Sales Order</a>
+                        <a href="/customer">{{ _('Customer') }}</a>
+                        <a href="/supplier">{{ _('Supplier') }}</a>
+                        <a href="/product">{{ _('Product') }}</a>
+                        <a href="/purchase_order">{{ _('Purchase Order') }}</a>
+                        <a href="/sales_order">{{ _('Sales Order') }}</a>
+                    </div>
+                </div>
+                <div class="navbar__dropdown">
+                    <span class="navbar__dropdown--button">{{_('Language')}}
+                        <i class="fa fa-caret-down"></i>
+                    </span>
+                    <div class="navbar__dropdown--content">
+                        <a href="{{ url_for('change_language', lang = 'en') }}">English</a>
+                        <a href="{{ url_for('change_language', lang = 'vi') }}">Tiếng Việt</a>
                     </div>
                 </div>
             </div>

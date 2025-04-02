@@ -5,20 +5,20 @@
 
 {% block body %}
 <div class="content">
-    <h1>Purchase Order Management</h1>
+    <h1>{{ _('Purchase Order Management') }}</h1>
     <table>
         <tr>
-            <th>Ordering Date</th>
-            <th>Payment Date</th>
-            <th>Supplier ID</th>
-            <th>Action</th>
+            <th>{{ _('Ordering Date') }}</th>
+            <th>{{ _('Payment Date') }}</th>
+            <th>{{ _('Supplier ID') }}</th>
+            <th>{{ _('Actions') }}</th>
         </tr>
         <form action="/purchase_order/update/{{ purchase_order.purchaseOrderID }}" method="POST">
         <tr>
             <td><input type="date" name="orderingDate" value="{{ purchase_order.orderingDate }}"></td>
             <td><input type="date" name="paymentDate" value="{{ purchase_order.paymentDate }}"></td>
             <td><input type="text" name ="supplierID" value="{{ purchase_order.supplierID }}" autocomplete="off"></td>
-            <td><input type="submit" value="Update"></td>
+            <td><input type="submit" value="{{ _('Update') }}"></td>
         </tr>
         </form>
     </table>

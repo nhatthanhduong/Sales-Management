@@ -10,21 +10,21 @@
         <a href="/sales" class="home__card">
             <div class="home__card--container">
                 <img src="{{ url_for('static', filename='sales_order.png') }}" alt="">
-                Sales
+                {{ _('Sales') }}
             </div>
         </a>
 
         <a href="/procurement" class="home__card">
             <div class="home__card--container">
                 <img src="{{ url_for('static', filename='purchase_order.png') }}" alt="">
-                Procurement
+                {{ _('Procurement') }}
             </div>
         </a>
         
         <a href="/database" class="home__card">
             <div class="home__card--container">
                 <img src="{{ url_for('static', filename='database.png') }}" alt="">
-                Database
+                {{ _('Database') }}
             </div>
         </a>
     </div>

@@ -5,20 +5,20 @@
 
 {% block body %}
 <div>
-    <h1>Product Management</h1>
+    <h1>{{ _('Product Management') }}</h1>
     <div>
         <div>
             <table>
                 <tr>
-                    <th>Name</th>
-                    <th>Category</th>
-                    <th>Description</th>
-                    <th>Unit</th>
-                    <th>Purchasing Price</th>
-                    <th>Selling Price</th>
-                    <th>Supplier ID</th>
-                    <th>Supplier Name</th>
-                    <th>Actions</th>
+                    <th>{{ _('Name') }}</th>
+                    <th>{{ _('Category') }}</th>
+                    <th>{{ _('Description') }}</th>
+                    <th>{{ _('Unit') }}</th>
+                    <th>{{ _('Purchasing Price') }}</th>
+                    <th>{{ _('Selling Price') }}</th>
+                    <th>{{ _('Supplier ID') }}</th>
+                    <th>{{ _('Supplier Name') }}</th>
+                    <th>{{ _('Actions') }}</th>
                 </tr>
                 {% for product in products %}
                     <tr>
@@ -31,8 +31,8 @@
                         <td>{{ product.supplierID }}</td>
                         <td>{{ product.supplierName }}</td>
                         <td>
-                            <a id="action", href="/product/delete/{{ product.productID }}">Delete</a>
-                            <a id="action", href="/product/update/{{ product.productID }}">Update</a>
+                            <a id="action", href="/product/delete/{{ product.productID }}">{{ _('Delete') }}</a>
+                            <a id="action", href="/product/update/{{ product.productID }}">{{ _('Update') }}</a>
                         </td>
                     </tr>
                 {% endfor %}
@@ -59,11 +59,11 @@
         </div><br>
 
         <div>
-            <h2>Supplier List</h2>
+            <h2>{{ _('Supplier List') }}</h2>
             <table>
                 <tr>
-                    <th>Supplier ID</th>
-                    <th>Supplier Name</th>
+                    <th>{{ _('Supplier ID') }}</th>
+                    <th>{{ _('Supplier Name') }}</th>
                 </tr>
                 {% for supplier in suppliers %}
                     <tr>

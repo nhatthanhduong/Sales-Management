@@ -7,41 +7,41 @@
 {% block body %}
 <div class="sales">
     <div class="sales__container">
-        <h2>Suppliers - Products</h2>
+        <h2>{{ _('Suppliers - Products') }}</h2>
         <div class="sales__content">
             <div class="sales__card">
                 <span class="sales__card--plus">+</span>
                 <div class="sales__card--content">
                     <form action="/procurement/new_supplier" method="POST">
-                        <label for="name">Name:</label>
+                        <label for="name">{{ _('Name:') }}</label>
                         <input type="text" id="name" name="supplierName" autocomplete="off" required>
     
-                        <label for="phone">Phone:</label>
+                        <label for="phone">{{ _('Phone:') }}</label>
                         <input type="text" id="phone" name="supplierPhone" required>
     
-                        <label for="address">Address:</label>
+                        <label for="address">{{ _('Address:') }}</label>
                         <input type="text" id="address" name="supplierAddress">
 
-                        <input type="submit" value="Add Supplier">
+                        <input type="submit" value="{{ _('Add Supplier') }}">
                     </form>
                 </div>
             </div>
             {% for supplierID, details in supplierDetails %}
                 <div class="sales__card">
-                    <h4>Name: {{ details.supplierName }}</h2>
+                    <h4>{{ _('Name: ') }} {{ details.supplierName }}</h4>
                     <div class="sales__card--content">
                         <form action="/procurement/add_product" method="POST">
                             <input type="text" name="supplierID" value="{{ supplierID }}" hidden>
                             <table>
                                 <thead>
                                     <tr>
-                                        <th>Product</th>
-                                        <th>Category</th>
-                                        <th>Description</th>
-                                        <th>Unit</th>
-                                        <th>Purchasing Price</th>
-                                        <th>Selling Price</th>
-                                        <th>Actions</th>
+                                        <th>{{ _('Product') }}</th>
+                                        <th>{{ _('Category') }}</th>
+                                        <th>{{ _('Description') }}</th>
+                                        <th>{{ _('Unit') }}</th>
+                                        <th>{{ _('Purchasing Price') }}</th>
+                                        <th>{{ _('Selling Price') }}</th>
+                                        <th>{{ _('Actions') }}</th>
                                     </tr>
                                 </thead>
                                 <tbody class="procurement__row">
@@ -65,12 +65,62 @@
                                     </tr>
                                     <tr>
                                         <td colspan="7">
-                                            <input type="submit" value="Add Products">
+                                            <input type="submit" value="{{ _('Add Products') }}">
                                         </td>
                                     </tr>
                                 </tfoot>
                             </table>
                         </form>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="sales__container">
+        <h2>{{ _('Purchase Orders') }}</h2>
+        <div class="sales__content">
+            {% for supplierName, details in purchase_order_dict %}
+                <div class="sales__card">
+                    <h4>{{ _('Name: ') }} {{ supplierName }}</h4>
+                    <div class="sales__card--content">
+                        {% for purchaseOrderID, order in details.items() %}
+                            <div class="sales__card--partition">
+                                <h5>{{ _('Ordering Date: ') }} {{ order.orderingDate }}</h5>
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>{{ _('Product') }}</th>
+                                            <th>{{ _('Quantity') }}</th>
+                                            <th>{{ _('Price') }}</th>
+                                        </tr>
+                                    </thead>
+                                    
+                                    <tbody>
+                                        {% for detail in order.details %}
+                                            <tr>
+                                                <td>{{ detail.productName }}</td>
+                                                <td>{{ detail.quantity }}</td>
+                                                <td>{{ detail.price }}</td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table><br>
+                                
+                                <div class="sales__card--delivered">
+                                    <form action="/procurement/pay_an_order" method="POST">
+                                        <input type="text" name="purchaseOrderID" value="{{ purchaseOrderID }}" hidden>
+                                        <input type="submit" value="{{ _('Paid') }}">
+                                    </form>
+                                </div>
+                            </div>
+                        {% endfor %}
+                        <div class="sales__card--delivered">
+                            <form action="/procurement/pay_all_order" method="POST">
+                                <input type="text" name="supplierName" value="{{ supplierName }}" hidden>
+                                <input type="submit" value="{{ _('All Paid') }}">
+                            </form>
+                        </div>
                     </div>
                 </div>
             {% endfor %}

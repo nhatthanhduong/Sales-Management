@@ -1,12 +1,37 @@
 from sqlalchemy import text, CheckConstraint
-from flask import Flask, request, render_template, redirect, jsonify
+from flask import Flask, request, render_template, redirect, url_for, jsonify, session
+from flask_session import Session
 from flask_babel import Babel, _
 from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
+
 app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:////app/instance/product_sales.db"
 db = SQLAlchemy(app)
+
+app.config["SESSION_PERMANENT"] = True
+app.config["SESSION_TYPE"] = "filesystem"
+Session(app)
+
+app.config['BABEL_DEFAULT_LOCALE'] = 'en'
+app.config['BABEL_TRANSLATION_DIRECTORIES'] = 'translations'
+
+babel = Babel()
+
+def get_locale():
+    return session.get("language", "en")
+
+@app.context_processor
+def inject_locale():
+    return dict(get_locale=get_locale)
+
+babel.locale_selector_func = get_locale
+
+@app.route('/change_language/<lang>')
+def change_language(lang):
+    session['language'] = lang
+    return redirect(request.referrer or url_for('index'))
 
 purchase_order_details = db.Table('purchaseorderdetails',
                                   db.Column('purchaseOrderID', db.String(10), db.ForeignKey('purchaseorder.purchaseOrderID'), primary_key = True),
@@ -22,7 +47,7 @@ sales_order_details = db.Table('salesorderdetails',
 
 class Customer(db.Model):
     customerID = db.Column(db.String(10), primary_key=True)
-    customerName = db.Column(db.String(30), nullable = False)
+    customerName = db.Column(db.String(30), unique = True, nullable = False)
     customerPhone = db.Column(db.String(10), unique=True, nullable=False)
     customerAddress = db.Column(db.String(200))
 
@@ -38,7 +63,7 @@ class Customer(db.Model):
 
 class Supplier(db.Model):
     supplierID = db.Column(db.String(10), primary_key=True)
-    supplierName = db.Column(db.String(30), nullable = False)
+    supplierName = db.Column(db.String(30), unique = True, nullable = False)
     supplierPhone = db.Column(db.String(10), unique=True, nullable=False)
     supplierAddress = db.Column(db.String(200))
 
@@ -633,8 +658,42 @@ def procurement():
             "purchasingPrice": purchasingPrice,
             "sellingPrice": sellingPrice
         })
+
+    purchase_order = db.session.execute(
+        text(
+            """
+            SELECT 
+                PO.purchaseOrderID, PO.orderingDate,
+                S.supplierName,
+                P.productName, POD.quantity, P.purchasingPrice
+            FROM PURCHASEORDER PO, PURCHASEORDERDETAILS POD, SUPPLIER S, PRODUCT P
+            WHERE
+                PO.purchaseOrderID = POD.purchaseOrderID
+                AND POD.productID = P.productID
+                AND PO.supplierID = S.supplierID
+                AND PO.paymentDate IS NULL
+            """
+        )
+    ).fetchall()
     
-    return render_template('procurement.html', supplierDetails = supplier_dict.items())
+    purchase_order_dict = {}
+    for detail in purchase_order:
+        purchaseOrderID, orderingDate, supplierName, productName, quantity, price= detail
+
+        if supplierName not in purchase_order_dict:
+            purchase_order_dict[supplierName] = {}
+        if purchaseOrderID not in purchase_order_dict[supplierName]:
+            purchase_order_dict[supplierName][purchaseOrderID] = {'orderingDate': orderingDate, 'details' : []}
+
+        purchase_order_dict[supplierName][purchaseOrderID]['details'].append({
+            "productName": productName,
+            "quantity": quantity,
+            "price": price
+        })
+    
+    return render_template('procurement.html', 
+                           supplierDetails = supplier_dict.items(),
+                           purchase_order_dict = purchase_order_dict.items())
 
 @app.route('/procurement/new_supplier', methods = ['POST'])
 def procurement_new_supplier():
@@ -690,6 +749,35 @@ def procurement_add_product():
         except:
             return 'There was a problem adding this product' 
     
+    return redirect('/procurement')
+
+@app.route('/procurement/pay_an_order', methods=['POST'])
+def procurement_pay_an_order():
+    purchaseOrderID = request.form['purchaseOrderID']
+    
+    try:
+        order = PurchaseOrder.query.get_or_404(purchaseOrderID)
+        order.paymentDate = datetime.today().date()
+        db.session.commit()
+    except:
+        return 'There was a problem updating this order'
+    return redirect('/procurement')
+
+@app.route('/procurement/pay_all_order', methods = ['POST'])
+def procurement_pay_all_order():
+    supplierName = request.form['supplierName']
+    
+    try:
+        supplierID = Supplier.query.filter_by(supplierName = supplierName).first().supplierID
+        PurchaseOrder.query.filter(
+            (PurchaseOrder.supplierID == supplierID) & 
+            (PurchaseOrder.paymentDate == None)
+            ).update(
+                {'paymentDate': datetime.today().date()}
+            )
+        db.session.commit()
+    except:
+        return 'There was a problem updating orders'
     return redirect('/procurement')
 
 @app.route('/suggest_customer', methods=['GET'])
@@ -1177,4 +1265,5 @@ def database():
 if __name__ == '__main__':
     app.app_context().push()
     db.create_all()
+    babel.init_app(app, locale_selector=get_locale)
     app.run(host='0.0.0.0', debug=True)

@@ -5,16 +5,16 @@
 
 {% block body %}
 <div class="content">
-    <h1>Product Management</h1>
+    <h1>{{ _('Product Management') }}</h1>
     <table>
         <tr>
-            <th>Name</th>
-            <th>Category</th>
-            <th>Description</th>
-            <th>Unit</th>
-            <th>Purchasing Price</th>
-            <th>Selling Price</th>
-            <th>Supplier ID</th>
+            <th>{{ _('Name') }}</th>
+            <th>{{ _('Category') }}</th>
+            <th>{{ _('Description') }}</th>
+            <th>{{ _('Unit') }}</th>
+            <th>{{ _('Purchasing Price') }}</th>
+            <th>{{ _('Selling Price') }}</th>
+            <th>{{ _('Supplier ID') }}</th>
         </tr>
         <form action="/product/update/{{ product.productID }}" method="POST">
         <tr>
@@ -25,7 +25,7 @@
             <td><input type="number" name="purchasingPrice" value="{{ product.purchasingPrice }}" autocomplete="off"></td>
             <td><input type="number" name="sellingPrice" value="{{ product.sellingPrice }}" autocomplete="off"></td>
             <td><input type="text" name="supplierID" value="{{ product.supplierID }}" autocomplete="off"></td>
-            <td><input type="submit" value="Update"></td>
+            <td><input type="submit" value="{{ _('Update') }}"></td>
         </tr>
         </form>
     </table>

@@ -5,18 +5,18 @@
 
 {% block body %}
 <div>
-    <h1>Sales Order Management</h1>
+    <h1>{{ _('Sales Order Management') }}</h1>
     <div>
         <div>
             <table id="large_table">
                 <tr>
-                    <th>Received Date</th>
-                    <th>Ordering Date</th>
-                    <th>Completed Date</th>
-                    <th>Payment Date</th>
-                    <th>CustomerID</th>
-                    <th>Customer Name</th>
-                    <th>Actions</th>
+                    <th>{{ _('Received Date') }}</th>
+                    <th>{{ _('Ordering Date') }}</th>
+                    <th>{{ _('Completed Date') }}</th>
+                    <th>{{ _('Payment Date') }}</th>
+                    <th>{{ _('Customer ID') }}</th>
+                    <th>{{ _('Customer Name') }}</th>
+                    <th>{{ _('Actions') }}</th>
                 </tr>
                 {% for sales_order in sales_orders %}
                     <tr>
@@ -27,9 +27,9 @@
                         <td>{{ sales_order.customerID }}</td>
                         <td>{{ sales_order.customerName }}</td>
                         <td>
-                            <a id="action", href="/sales_order/delete/{{ sales_order.salesOrderID }}">Delete</a>
-                            <a id="action", href="/sales_order/update/{{ sales_order.salesOrderID }}">Update</a>
-                            <a id="action", href="/sales_order/add_products/{{ sales_order.salesOrderID}}">Add Products</a>
+                            <a id="action", href="/sales_order/delete/{{ sales_order.salesOrderID }}">{{ _('Delete') }}</a>
+                            <a id="action", href="/sales_order/update/{{ sales_order.salesOrderID }}">{{ _('Update') }}</a>
+                            <a id="action", href="/sales_order/add_products/{{ sales_order.salesOrderID}}">{{ _('Add Products') }}</a>
                         </td>
                     </tr>
                 {% endfor %}
@@ -42,7 +42,7 @@
                         <td><input type="date" name ="paymentDate"></td>
                         <td><input type="text" name="customerID" autocomplete="off"></td>
                         <td><input type="text" name="customerName" autocomplete="off" list="customers"></td>
-                        <td><input type="submit" value="Add Sales Order"></td>
+                        <td><input type="submit" value="{{ _('Add Sales Order') }}"></td>
                     </tr>
                 </form>
                 <datalist id="customers">
@@ -53,12 +53,12 @@
             </table>
         </div>
         <div>
-            <h2>Customer List</h2>
+            <h2>{{ _('Customer List') }}</h2>
             <table>
                 <tr>
-                    <th>Customer ID</th>
-                    <th>Customer Name</th>
-                    <th>Customer Address</th>
+                    <th>{{ _('Customer ID') }}</th>
+                    <th>{{ _('Customer Name') }}</th>
+                    <th>{{ _('Customer Address') }}</th>
                 </tr>
                 {% for customer in customers %}
                     <tr>
