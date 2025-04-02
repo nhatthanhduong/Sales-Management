@@ -118,6 +118,8 @@
                         <div class="sales__card--delivered">
                             <form action="/procurement/pay_all_order" method="POST">
                                 <input type="text" name="supplierName" value="{{ supplierName }}" hidden>
+                                <p id="total__debt">{{ _('Total Debt: ') }} {{ total_debt[supplierName] }}</p>
+                                <span id="raw_total_debt" hidden>{{ total_debt[supplierName] }}</span>
                                 <input type="submit" value="{{ _('All Paid') }}">
                             </form>
                         </div>

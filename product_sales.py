@@ -7,7 +7,7 @@ from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:////app/instance/product_sales.db"
+app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///product_sales.db"
 db = SQLAlchemy(app)
 
 app.config["SESSION_PERMANENT"] = True
@@ -287,13 +287,14 @@ def sales():
         )
     )
 
-    total_debt = 0
+    total_debt = {}
     unpaid_dict = {}
     for order in unpaidOrders:
         salesOrderID, customerName, completedDate, productID, productName, quantity, price = order
 
         if customerName not in unpaid_dict:
             unpaid_dict[customerName] = {}
+            total_debt[customerName] = 0
 
         if salesOrderID not in unpaid_dict[customerName]:
             unpaid_dict[customerName][salesOrderID] = {'completedDate': completedDate, 'details': []}
@@ -304,7 +305,7 @@ def sales():
             "quantity": quantity,
             "price": price
         })
-        total_debt += price*quantity
+        total_debt[customerName] += price*quantity
     
     products = Product.query.order_by(db.func.cast(db.func.substring(Product.productID, 2), db.Integer)).all()
 
@@ -676,12 +677,14 @@ def procurement():
         )
     ).fetchall()
     
+    total_debt = {}
     purchase_order_dict = {}
     for detail in purchase_order:
         purchaseOrderID, orderingDate, supplierName, productName, quantity, price= detail
 
         if supplierName not in purchase_order_dict:
             purchase_order_dict[supplierName] = {}
+            total_debt[supplierName] = 0
         if purchaseOrderID not in purchase_order_dict[supplierName]:
             purchase_order_dict[supplierName][purchaseOrderID] = {'orderingDate': orderingDate, 'details' : []}
 
@@ -690,10 +693,12 @@ def procurement():
             "quantity": quantity,
             "price": price
         })
+        total_debt[supplierName] += quantity*price
     
     return render_template('procurement.html', 
                            supplierDetails = supplier_dict.items(),
-                           purchase_order_dict = purchase_order_dict.items())
+                           purchase_order_dict = purchase_order_dict.items(),
+                           total_debt = total_debt)
 
 @app.route('/procurement/new_supplier', methods = ['POST'])
 def procurement_new_supplier():
