@@ -1,6 +1,6 @@
 services:
   salesmanagement:
-    build: .
+    image: nhatthanhduong/sales-management
     ports:
       - "5000:5000"
     volumes:
