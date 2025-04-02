@@ -9,9 +9,7 @@ COPY . .
 
 EXPOSE 5000
 
-# ENV FLASK_APP=product_sales.py
-# ENV FLASK_RUN_HOST=0.0.0.0
-# ENV FLASK_ENV=development
+RUN pybabel compile -d translations
 
 ENTRYPOINT [ "python" ]
 CMD ["product_sales.py"]
